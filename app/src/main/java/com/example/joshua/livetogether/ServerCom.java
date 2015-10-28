@@ -36,7 +36,7 @@ public class ServerCom
 	}*/
 
 
-	public static String addTask (String apt_id, String task) {
+	public static void addTask (String apt_id, String task) {
 	  HttpURLConnection connection = null;  
 	  try {
 	    //Create connection
@@ -58,21 +58,10 @@ public class ServerCom
 	        connection.getOutputStream());
 	    wr.writeBytes(task);
 	    wr.close();
-
-	    //Get Response  
-	    InputStream is = connection.getInputStream();
-	    BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-	    StringBuilder response = new StringBuilder(); // or StringBuffer if not Java 5+ 
-	    String line;
-	    while((line = rd.readLine()) != null) {
-	      response.append(line);
-	      response.append('\r');
-	    }
-	    rd.close();
-	    return response.toString();
+	    
 	  } catch (Exception e) {
 	    e.printStackTrace();
-	    return null;
+	    return;
 	  } finally {
 	    if(connection != null) {
 	      connection.disconnect(); 
@@ -88,23 +77,23 @@ public class ServerCom
 	    connection = (HttpURLConnection)url.openConnection();
 	    connection.setRequestMethod("GET");
 	    connection.setDoOutput(true);
+	    connection.setRequestProperty("User-Agent", "Mozilla/5.0");
 
-	    //Send request
-	    DataOutputStream wr = new DataOutputStream (
-	        connection.getOutputStream());
-	    wr.close();
+	    int responseCode = connection.getResponseCode();
 
 	    //Get Response  
-	    InputStream is = connection.getInputStream();
-	    BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-	    StringBuilder response = new StringBuilder(); // or StringBuffer if not Java 5+ 
-	    String line;
-	    while((line = rd.readLine()) != null) {
-	      response.append(line);
-	      response.append('\r');
-	    }
-	    rd.close();
-	    return response.toString();
+		BufferedReader in = new BufferedReader(
+		        new InputStreamReader(connection.getInputStream()));
+		String inputLine;
+		StringBuffer response = new StringBuffer();
+
+		while ((inputLine = in.readLine()) != null) {
+			response.append(inputLine);
+		}
+		in.close();
+ 		return (response.toString());
+
+
 	  } catch (Exception e) {
 	    e.printStackTrace();
 	    return null;
