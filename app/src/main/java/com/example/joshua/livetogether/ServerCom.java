@@ -6,6 +6,8 @@ api.add_resource(Register, '/register/')
 api.add_resource(JoinApartment, '/join/')
 */
 
+package com.example.joshua.livetogether;
+
 import java.io.BufferedReader;
 import java.io.*; 
 import java.io.InputStreamReader;

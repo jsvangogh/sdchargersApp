@@ -318,7 +318,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
                 // Simulate network access.
                 //aptID = serverCom.getApartment(mEmail);
-                Thread.sleep(200);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 return false;
             }
