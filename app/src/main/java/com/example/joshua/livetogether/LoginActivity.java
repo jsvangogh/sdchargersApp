@@ -190,7 +190,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mAuthTask.execute((Void) null);
 
             Intent dashIntent = new Intent (this, Dash.class);
-            dashIntent.putExtra("com.example.joshua.livetogether.aptID", "dummyID");
+            dashIntent.putExtra("com.example.joshua.livetogether.aptID", "56306f75129270000ac80798");
             startActivity(dashIntent);
         }
     }
