@@ -43,7 +43,7 @@ public class AddTask extends AppCompatActivity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 task = editTextName.getText().toString();
-                ServerCom.addTask(aptID, task);
+                ServerCom.addTask(aptID, "task=" + task);
                 return true;
             }
         });
