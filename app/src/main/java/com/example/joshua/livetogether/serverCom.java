@@ -1,5 +1,5 @@
 // URL Constant to mongoDB server
-HOST = "http://sdchargers.herokuapp.com/"
+/*HOST = "http://sdchargers.herokuapp.com/"
 api.add_resource(ApartmentList, '/Apartments/')
 api.add_resource(Apartment, '/Apartments/<ObjectId:apartment_id>')
 api.add_resource(Register, '/register/')
@@ -122,6 +122,6 @@ class serverCom(String hostURI) {
 		String responseBody = EntityUtils.toString(response.getEntity());
 		return responseBody
 	}
-	*/
 
-}
+
+}*/
