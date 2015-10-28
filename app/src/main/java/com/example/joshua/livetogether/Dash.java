@@ -25,7 +25,7 @@ public class Dash extends AppCompatActivity {
     @Override
     protected void onResume()
     {
-        tasks = serverCom.getTasks(aptID);
+        tasks = ServerCom.getTasks(aptID);
     }
 
     public void add(View view)

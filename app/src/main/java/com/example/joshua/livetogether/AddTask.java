@@ -1,5 +1,6 @@
 package com.example.joshua.livetogether;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -14,6 +15,7 @@ public class AddTask extends AppCompatActivity {
 
     private boolean notif = false;
     private String task = "";
+    private String aptID = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,14 +24,17 @@ public class AddTask extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        Intent intent = getIntent();
+        aptID = intent.getStringExtra("com.example.joshua.livetogether.aptID");
+
+        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
-        });
+        });*/
     }
 
     public void submitForm(View view) {
@@ -38,12 +43,11 @@ public class AddTask extends AppCompatActivity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 task = editTextName.getText().toString();
-                //addTask(task);
-                finish();
+                ServerCom.addTask(aptID, task);
                 return true;
             }
         });
+        finish();
     }
-
 
 }
