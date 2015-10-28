@@ -5,6 +5,7 @@ api.add_resource(Apartment, '/Apartments/<ObjectId:apartment_id>')
 api.add_resource(Register, '/register/')
 api.add_resource(JoinApartment, '/join/')
 */
+package com.example.joshua.livetogether;
 
 import java.io.BufferedReader;
 import java.io.*; 
@@ -85,18 +86,20 @@ public class ServerCom
 	}
 
 	public static String getTasks (String apt_id) {
-	  HttpURLConnection connection = null;  
+	  HttpURLConnection connection = null;
 	  try {
 	    //Create connection
-	    URL url = new URL(HOST + "Apartments/" + apt_id);
+	    URL url = new URL("http://sdchargers.herokuapp.com/Apartments/" + apt_id);
 	    connection = (HttpURLConnection)url.openConnection();
 	    connection.setRequestMethod("GET");
-	    connection.setDoOutput(true);
-	    connection.setRequestProperty("User-Agent", "Mozilla/5.0");
+
+		connection.setRequestProperty("Content-Type",
+				  "application/x-www-form-urlencoded");
+
 
 	    int responseCode = connection.getResponseCode();
 
-	    //Get Response  
+	    //Get Response
 		BufferedReader in = new BufferedReader(
 		        new InputStreamReader(connection.getInputStream()));
 		String inputLine;
@@ -114,7 +117,7 @@ public class ServerCom
 	    return null;
 	  } finally {
 	    if(connection != null) {
-	      connection.disconnect(); 
+	      connection.disconnect();
 	    }
 	  }
 	}

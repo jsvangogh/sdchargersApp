@@ -95,6 +95,7 @@ public class Dash extends AppCompatActivity {
 
             try {
                 mtaskString = ServerCom.getTasks(maptID);
+                System.out.println(mtaskString);
             } catch (Exception e) {
                 this.exception = e;
                 return null;
@@ -106,7 +107,7 @@ public class Dash extends AppCompatActivity {
         protected void onPostExecute(String taskString) {
             String[] tempTasks;
             if (mtaskString != null) {
-                tempTasks = mtaskString.split("*");
+                tempTasks = mtaskString.split(",");
             } else {
                 tempTasks = new String[]{"FUUUDGE"};
             }
