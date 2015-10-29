@@ -44,6 +44,7 @@ public class ServerCom
 	    URL url = new URL(HOST + "Apartments/" + apt_id);
 	    connection = (HttpURLConnection)url.openConnection();
 	    connection.setRequestMethod("POST");
+		  connection.setDoOutput(true);
 	    connection.setRequestProperty("Content-Type", 
 	        "application/x-www-form-urlencoded");
 

@@ -1,6 +1,7 @@
 package com.example.joshua.livetogether;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -11,11 +12,15 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.view.KeyEvent;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 public class AddTask extends AppCompatActivity {
 
     private boolean notif = false;
     private String task = "";
-    private String aptID = "";
+    private String mAptID = "";
+    private TaskAdder mTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,29 +30,45 @@ public class AddTask extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         Intent intent = getIntent();
-        aptID = intent.getStringExtra("com.example.joshua.livetogether.aptID");
+        mAptID = intent.getStringExtra("com.example.joshua.livetogether.aptID");
 
-        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/
     }
 
     public void submitForm(View view) {
-        final EditText editTextName = (EditText) findViewById(R.id.editText);
-        editTextName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                task = editTextName.getText().toString();
-                ServerCom.addTask(aptID, "task=" + task);
-                return true;
-            }
-        });
+        final EditText editTextName = (EditText)(findViewById(R.id.editText));
+
+        task = editTextName.getText().toString();
+        task = "task=" + task;
+
+        mTask = new TaskAdder();
+        mTask.execute((Void) null);
         finish();
+    }
+
+    class TaskAdder extends AsyncTask<Void, Void, Void> {
+        //String maptID;
+        //String mtaskString;
+        Exception exception;
+
+
+
+        @Override
+        protected Void doInBackground(Void... v) {
+
+            try {
+                ServerCom.addTask(mAptID, task);
+                //System.out.println(mtaskString);
+            } catch (Exception e) {
+                this.exception = e;
+                return null;
+            }
+
+            return null;
+        }
+
+        protected void onPostExecute(Void... v) {
+            finish();
+        }
     }
 
 }
