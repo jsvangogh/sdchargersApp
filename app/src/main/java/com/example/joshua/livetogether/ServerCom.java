@@ -58,7 +58,9 @@ public class ServerCom
 			// ---------------------
 			// PROCESS JSON RESPONSE
 			JSONObject respJson = new JSONObject(response.toString());
-			String uid = respJson.getString("_id");
+			JSONObject idObj = respJson.getJSONObject("_id");
+			System.out.println(idObj.toString());
+			String uid = idObj.getString("$oid");
 			return uid;
 
 
