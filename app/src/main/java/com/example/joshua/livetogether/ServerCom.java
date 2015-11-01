@@ -1,4 +1,4 @@
-//package com.example.joshua.livetogether;
+package com.example.joshua.livetogether;
 
 import java.io.BufferedReader;
 import java.io.*; 
@@ -12,6 +12,8 @@ public class ServerCom
 {
 	// Define string constant
 	public static final String HOST = "http://sdchargers.herokuapp.com/";
+
+	public static String signIn (String username, String password) {return "string user id";}
 
 	public static String addTask (String apt_id, String task) {
 	  HttpURLConnection connection = null;  
