@@ -17,11 +17,13 @@ public class Dash extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        String userID;
+
         setContentView(R.layout.activity_dash);
 
         // get the apartment ID from the login page
         Intent intent = getIntent();
-        maptID = intent.getStringExtra("com.example.joshua.livetogether.aptID");
+        userID = intent.getStringExtra("com.example.joshua.livetogether.user");
 
         mTasksView = (TextView) findViewById(R.id.Tasks);
     }
