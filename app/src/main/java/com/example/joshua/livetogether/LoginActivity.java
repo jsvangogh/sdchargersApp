@@ -63,6 +63,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private View mProgressView;
     private View mLoginFormView;
 
+    private String user;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -316,9 +318,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             try {
 
-                // Simulate network access.
-                //aptID = serverCom.getApartment(mEmail);
-                Thread.sleep(1000);
+                 user = ServerCom.signIn(mEmail, mPassword);
             } catch (InterruptedException e) {
                 return false;
             }

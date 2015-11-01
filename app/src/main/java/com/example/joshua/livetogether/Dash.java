@@ -5,17 +5,11 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 public class Dash extends AppCompatActivity {
 
-    private String aptID = null;
-    ArrayList<String> tasks;
+    private String maptID = null;
     TaskRetriever mTaskRetriever;
     TextView mTasksView;
 
@@ -27,10 +21,7 @@ public class Dash extends AppCompatActivity {
 
         // get the apartment ID from the login page
         Intent intent = getIntent();
-        aptID = intent.getStringExtra("com.example.joshua.livetogether.aptID");
-
-        // initialize the task array list
-        tasks = new ArrayList<>();
+        maptID = intent.getStringExtra("com.example.joshua.livetogether.aptID");
 
         mTasksView = (TextView) findViewById(R.id.Tasks);
     }
@@ -38,9 +29,10 @@ public class Dash extends AppCompatActivity {
     // Update the task list on resume
     @Override
     protected void onResume() {
+        if (mTaskRetriever != null) {return;}
+
         super.onResume();
-        String taskList = null;
-        mTaskRetriever = new TaskRetriever(aptID);
+        mTaskRetriever = new TaskRetriever();
         mTaskRetriever.execute((Void) null);
     }
 
@@ -51,55 +43,34 @@ public class Dash extends AppCompatActivity {
     }
 
 
-    class TaskRetriever extends AsyncTask<Void, Void, String> {
-        String maptID;
-        String mtaskString;
+    class TaskRetriever extends AsyncTask<Void, Void, Void> {
+        String mtaskString[];
+        String mText;
         Exception exception;
 
-
-        TaskRetriever(String aptID) {
-            maptID = aptID;
-        }
-
         @Override
-        protected String doInBackground(Void... v) {
+        protected Void doInBackground(Void... v) {
 
             try {
                 mtaskString = ServerCom.getTasks(maptID);
-                System.out.println(mtaskString);
             } catch (Exception e) {
                 this.exception = e;
-                return null;
             }
 
-            return mtaskString;
+            return null;
         }
 
-        protected void onPostExecute(String taskString) {
-            String[] tempTasks;
-            if (mtaskString != null) {
-                tempTasks = mtaskString.split(",");
-            } else {
-                tempTasks = new String[]{"FUUUDGE"};
-            }
-            tasks = new ArrayList<>();
-
-            for (String a : tempTasks) {
-                tasks.add(a);
+        protected void onPostExecute(Void v) {
+            if (mtaskString == null) {
+                mtaskString = new String[]{"FUUUUUDGE"};
             }
 
-            Iterator<String> taskIterator = tasks.iterator();
-            String s = "";
-
-            for (int i = 0; i < tasks.size(); i++) {
-                if (taskIterator.hasNext()) {
-                    s += taskIterator.next();
-                    s += "\n";
-                }
+            for (int i = 0; i < mtaskString.length; i++) {
+                mText += mtaskString[i];
+                mText += "\n";
             }
 
-
-            mTasksView.setText(s.replace( "\"", ""));
+            mTasksView.setText(mText.replace( "\"", ""));
 
             mTaskRetriever = null;
         }
