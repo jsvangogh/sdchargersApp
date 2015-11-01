@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.InputType;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -24,10 +23,13 @@ public class Dash extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        String userID;
+
         setContentView(R.layout.activity_dash);
         String aptName = null;
         // get the apartment ID from the login page
         Intent intent = getIntent();
+
         mUserID = intent.getStringExtra("com.example.joshua.livetogether.user");
         mApartmentRetriever = new ApartmentRetriever(aptName);
         mApartmentRetriever.execute((Void) null);
