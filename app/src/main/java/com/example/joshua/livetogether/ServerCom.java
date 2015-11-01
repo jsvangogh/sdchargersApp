@@ -13,7 +13,64 @@ public class ServerCom
 	// Define string constant
 	public static final String HOST = "http://sdchargers.herokuapp.com/";
 
-	public static String signIn (String username, String password) {return "string user id";}
+	public static String signIn (String username, String password) {
+		HttpURLConnection connection = null;
+		username = "username=" + username;
+		password = "password=" + password;
+
+		String args = username + "&" + password;
+
+		try {
+			//Create connection
+			URL url = new URL("http://sdchargers.herokuapp.com/login/");
+			connection = (HttpURLConnection)url.openConnection();
+			connection.setRequestMethod("POST");
+
+			connection.setRequestProperty("Content-Type",
+					"application/x-www-form-urlencoded");
+
+	    	connection.setRequestProperty("Content-Length", 
+	        Integer.toString(username.getBytes().length) + password.getBytes().length);
+	    	connection.setRequestProperty("Content-Language", "en-US");  
+
+	    	connection.setUseCaches(false);
+	    	connection.setDoOutput(true);
+
+	    	//Send request
+	    	DataOutputStream wr = new DataOutputStream (
+	        connection.getOutputStream());
+	    	wr.writeBytes(args);
+	    	wr.close();
+
+			int responseCode = connection.getResponseCode();
+
+			//Get Response
+			BufferedReader in = new BufferedReader(
+					new InputStreamReader(connection.getInputStream()));
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			in.close();
+
+			// ---------------------
+			// PROCESS JSON RESPONSE
+			JSONObject respJson = new JSONObject(response.toString());
+			String uid = respJson.getString("_id");
+			return uid;
+
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+			if(connection != null) {
+				connection.disconnect();
+			}
+		}
+	}
 
 	public static String addTask (String apt_id, String task) {
 	  HttpURLConnection connection = null;  
