@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/LiveTogether.iml" filepath="$PROJECT_DIR$/LiveTogether.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sdchargersApp.iml" filepath="$PROJECT_DIR$/sdchargersApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/sdchargersApp.iml" filepath="$PROJECT_DIR$/sdchargersApp.iml" />
     </modules>
   </component>

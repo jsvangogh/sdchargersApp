@@ -42,35 +42,6 @@ public class Dash extends AppCompatActivity {
         String taskList = null;
         mTaskRetriever = new TaskRetriever(aptID);
         mTaskRetriever.execute((Void) null);
-//        String[] tempTasks;
-//        if(taskList != null) {
-//            tempTasks = taskList.split("*");
-//        }
-//        else
-//        {
-//            tempTasks = new String[]{"FUUUDGE"};
-//        }
-//        tasks = new ArrayList<>();
-//
-//        for(String a: tempTasks)
-//        {
-//            tasks.add(a);
-//        }
-//
-//        Iterator<String> taskIterator = tasks.iterator();
-//        String s = "";
-//
-//        for(int i = 0; i < tasks.size(); i++)
-//        {
-//            if(taskIterator.hasNext())
-//            {
-//                s += taskIterator.next();
-//                s += "\n";
-//            }
-//        }
-//
-//        TextView tasksView = (TextView) findViewById(R.id.Tasks);
-//        tasksView.setText(s);
     }
 
     public void add(View view) {
@@ -127,7 +98,8 @@ public class Dash extends AppCompatActivity {
                 }
             }
 
-            mTasksView.setText(s);
+
+            mTasksView.setText(s.replace( "\"", ""));
 
             mTaskRetriever = null;
         }
