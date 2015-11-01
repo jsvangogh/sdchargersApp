@@ -1,17 +1,11 @@
-/* URL Constant to mongoDB server
-HOST = "http://sdchargers.herokuapp.com/"
-api.add_resource(ApartmentList, '/Apartments/')
-api.add_resource(Apartment, '/Apartments/<ObjectId:apartment_id>')
-api.add_resource(Register, '/register/')
-api.add_resource(JoinApartment, '/join/')
-*/
-package com.example.joshua.livetogether;
+//package com.example.joshua.livetogether;
 
 import java.io.BufferedReader;
 import java.io.*; 
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import org.json.*;
 
 
 public class ServerCom
@@ -19,26 +13,10 @@ public class ServerCom
 	// Define string constant
 	public static final String HOST = "http://sdchargers.herokuapp.com/";
 
-	//HttpClient httpClient = new defaultHttpClient();
-
-	/*public String login(String user, String pass)
-	{
-		HttpPost httpPost = new HttpPost(HOST);
-
-		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-		nameValuePairs.add(new BasicNameValuePair("user",user));
-		nameValuePairs.add(new BasicNameValuePair("pass",pass));
-
-		HttpResponse response = httpClient.sendPost(httpPost, nameValuePairs);
-
-		// Read response here
-		String responseBody = EntityUtils.toString(response.getEntity());
-		return responseBody;
-	}*/
-
-
 	public static String addTask (String apt_id, String task) {
 	  HttpURLConnection connection = null;  
+	  task = "task=" + task;
+
 	  try {
 	    //Create connection
 	    URL url = new URL(HOST + "Apartments/" + apt_id);
@@ -86,7 +64,7 @@ public class ServerCom
 	  }
 	}
 
-	public static String getTasks (String apt_id) {
+	public static String[] getTasks (String apt_id) {
 	  HttpURLConnection connection = null;
 	  try {
 	    //Create connection
@@ -110,7 +88,17 @@ public class ServerCom
 			response.append(inputLine);
 		}
 		in.close();
- 		return (response.toString());
+
+		// ---------------------
+		// PROCESS JSON RESPONSE
+		JSONObject respJson = new JSONObject(response.toString());
+		JSONArray arr = respJson.getJSONArray("tasks");
+		String[] toReturn = new String[arr.length()];
+		for (int i = 0; i < arr.length(); i++)
+		{
+			toReturn[i] = arr.getString(i);
+		}
+ 		return toReturn;
 
 
 	  } catch (Exception e) {
@@ -122,112 +110,4 @@ public class ServerCom
 	    }
 	  }
 	}
-
-
-	/*
-	//-return an ArrayList that contains all of the tasks for the apartment
-	//-return an empty ArrayList if there are none
-	public static String getTaskList(String apt_id) {
-		String route = "Apartments/" + apt_id;
-		HttpGet httpGet = new HttpGet(HOST + route);
-
-		// String session_id = "dummy_session_id";
-
-		//List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-		//nameValuePairs.add(new BasicNameValuePair("session_id",session_id));
-
-		try { inPost.setEntity(new UrlEncodedFormEntity(inData));
-		} catch (UnsupportedEncodingException e) {
-			System.out.print(e.printStackTrace());
-		}
-
-		try {
-			HttpResponse response = httpClient.execute(httpGet);
-			Log.d("Http Response:", response.toString());
-		} catch (ClientProtocolException e) {
-			System.out.print(e.printStackTrace());
-		} catch (IOException e)	{
-			System.out.print(e.printStackTrace());
-		}
-
-		HttpResponse response = httpClient.sendGet(httpGet, nameValuePairs);
-
-		String responseBody = EntityUtils.toString(response.getEntity());
-		return responseBody;
-	}
-	*/
-
-	/*
-	//-add a task to the database for the apartment
-	//-return false if it fails (not sure if this can happen)
-	String addTask(String task) {
-		String route = "/apartment/tasks";
-		HttpPost httpPost = new HttpPost(HOST + route);
-
-		String session_id = "dummy_session_id";
-
-		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-		nameValuePairs.add(new BasicNameValuePair("session_id",session_id));
-		nameValuePairs.add(new BasicNameValuePair("task",task));
-
-		try {
-			HttpResponse response = httpClient.execute(httpPost);
-			Log.d("Http Response:", response.toString());
-		} catch (ClientProtocolException e) {
-			System.out.print(e.printStackTrace());
-		} catch (IOException e)	{
-			System.out.print(e.printStackTrace());
-		}
-
-		String responseBody = EntityUtils.toString(response.getEntity());
-		return responseBody;
-	}
-	*/
-
-	/* //-create a new apartment in the database
-	//-return the newly generated ID
-	String createApartment(String name) {
-		String route = "/apartmentList/";
-		HttpPost httpPost = new HttpPost(HOST + route);
-
-		String session_id = "dummy_session_id";
-
-		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-		nameValuePairs.add(new BasicNameValuePair("session_id",session_id));
-		nameValuePairs.add(new BasicNameValuePair("name",name));
-
-		try {
-			HttpResponse response = httpClient.execute(httpPost);
-			Log.d("Http Response:", response.toString());
-		} catch (ClientProtocolException e) {
-			System.out.print(e.printStackTrace());
-		} catch (IOException e)	{
-			System.out.print(e.printStackTrace());
-		}
-
-		String responseBody = EntityUtils.toString(response.getEntity());
-		return responseBody;
-	} */
-
-	/*
-	//This one is less necessary for this iteration but if you want to implement it
-	//-remove task from database
-	//-return false if unsuccessful and true if it worked
-	boolean removeTask(String task) {
-		HttpDelete HttpDelete = new HttpDelete(HOST + "/apartment/task")
-
-		String session_id = "dummy_session_id"
-		String command = "removeTask"
-
-		List<NameValuePair> nameValuePairs = ArrayList<NameValuePair>();
-		nameValuePairs.add(new BasicNameValuePair("session_id",session_id));
-		nameValuePairs.add(new BasicNameValuePair("command",command));
-		nameValuePairs.add(new BasicNameValuePair("task",task));
-
-		HttpResponse response = httpClient.sendPost(httpPost, nameValuePairs);
-		String responseBody = EntityUtils.toString(response.getEntity());
-		return responseBody
-	}
-	*/
-
 }
