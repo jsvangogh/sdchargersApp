@@ -38,7 +38,6 @@ public class AddTask extends AppCompatActivity {
         final EditText editTextName = (EditText)(findViewById(R.id.editText));
 
         task = editTextName.getText().toString();
-        task = "task=" + task;
 
         mTask = new TaskAdder();
         mTask.execute((Void) null);
