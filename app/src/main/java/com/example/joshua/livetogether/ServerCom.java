@@ -13,6 +13,8 @@ public class ServerCom
 	// Define string constant
 	public static final String HOST = "http://sdchargers.herokuapp.com/";
 
+
+	// Allow user to sign in and get their User ID
 	public static String signIn (String username, String password) {
 		HttpURLConnection connection = null;
 		username = "username=" + username;
@@ -59,7 +61,6 @@ public class ServerCom
 			// PROCESS JSON RESPONSE
 			JSONObject respJson = new JSONObject(response.toString());
 			JSONObject idObj = respJson.getJSONObject("_id");
-			System.out.println(idObj.toString());
 			String uid = idObj.getString("$oid");
 			return uid;
 
@@ -74,13 +75,192 @@ public class ServerCom
 		}
 	}
 
+
+	// Register a new user
+	public static String register (String username, String password) {
+		HttpURLConnection connection = null;
+
+		// Prepare user registration info
+		username = "\"username\": \"" + username + "\"";
+		password = "\"password\": \"" + password + "\"";
+		String user = "user={" + username + ", " + password + "}";
+
+		String args = user;
+
+		try {
+			//Create connection
+			URL url = new URL("http://sdchargers.herokuapp.com/register/");
+			connection = (HttpURLConnection)url.openConnection();
+			connection.setRequestMethod("POST");
+
+			connection.setRequestProperty("Content-Type",
+					"application/x-www-form-urlencoded");
+
+	    	connection.setRequestProperty("Content-Length", 
+	        Integer.toString(username.getBytes().length) + password.getBytes().length);
+	    	connection.setRequestProperty("Content-Language", "en-US");  
+
+	    	connection.setUseCaches(false);
+	    	connection.setDoOutput(true);
+
+	    	//Send request
+	    	DataOutputStream wr = new DataOutputStream (
+	        connection.getOutputStream());
+	    	wr.writeBytes(args);
+	    	wr.close();
+
+			int responseCode = connection.getResponseCode();
+
+			//Get Response
+			BufferedReader in = new BufferedReader(
+					new InputStreamReader(connection.getInputStream()));
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			in.close();
+
+			// ---------------------
+			// PROCESS JSON RESPONSE
+			// If username was taken return null
+			if (response.toString().equals("\"Username is already taken!\""))
+				return null;
+
+			JSONObject respJson = new JSONObject(response.toString());
+			String uid = respJson.getString("$oid");
+			return uid;
+
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+			if(connection != null) {
+				connection.disconnect();
+			}
+		}
+	}
+
+
+	// Allow user to set apartment ID based on their User ID
+	public static String setApartmentID (String userID, String aptName) {
+		HttpURLConnection connection = null;
+		aptName = "aptName=" + aptName;
+
+		String args = aptName;
+
+		try {
+			//Create connection
+			URL url = new URL("http://sdchargers.herokuapp.com/join/");
+			connection = (HttpURLConnection)url.openConnection();
+			connection.setRequestMethod("POST");
+
+			connection.setRequestProperty("Content-Type",
+					"application/x-www-form-urlencoded");
+
+	    	connection.setRequestProperty("Content-Length", 
+	        Integer.toString(aptName.getBytes().length));
+	    	connection.setRequestProperty("Content-Language", "en-US");  
+
+	    	connection.setUseCaches(false);
+	    	connection.setDoOutput(true);
+
+	    	//Send request
+	    	DataOutputStream wr = new DataOutputStream (
+	        connection.getOutputStream());
+	    	wr.writeBytes(args);
+	    	wr.close();
+
+			int responseCode = connection.getResponseCode();
+
+			//Get Response
+			BufferedReader in = new BufferedReader(
+					new InputStreamReader(connection.getInputStream()));
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			in.close();
+
+			// ---------------------
+			// PROCESS JSON RESPONSE
+			JSONObject respJson = new JSONObject(response.toString());
+			JSONObject idObj = respJson.getJSONObject("_id");
+			String uid = idObj.getString("$oid");
+			return uid;
+
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+			if(connection != null) {
+				connection.disconnect();
+			}
+		}
+	}
+
+
+	// Given a user ID, return the associated apartment ID
+	public static String getApartmentID (String userID) {
+		HttpURLConnection connection = null;
+		try {
+			//Create connection
+			URL url = new URL("http://sdchargers.herokuapp.com/users/"
+				+ userID);
+			connection = (HttpURLConnection)url.openConnection();
+			connection.setRequestMethod("GET");
+
+			// Set header properties
+			connection.setRequestProperty("Content-Type",
+				"application/x-www-form-urlencoded");
+	    	connection.setRequestProperty("Content-Language", "en-US");  
+	    	connection.setUseCaches(false);
+
+	    	// Make the query and get response status
+			int responseCode = connection.getResponseCode();
+
+			//Get Response sa JSON in text format
+			BufferedReader in = new BufferedReader(
+					new InputStreamReader(connection.getInputStream()));
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			in.close();
+
+			// ---------------------
+			// PROCESS JSON RESPONSE
+			JSONObject respJson = new JSONObject(response.toString());
+			JSONObject apartment = respJson.getJSONObject("apartment");
+			String aid = apartment.getString("$oid");
+			return aid;
+
+		// Make the compiler happy! and report errors...
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+			if(connection != null) {
+				connection.disconnect();
+			}
+		}
+	}
+
+
+	// Given an apartment ID and a task string, add it to the list
 	public static String addTask (String apt_id, String task) {
 	  HttpURLConnection connection = null;  
 	  task = "task=" + task;
 
 	  try {
 	    //Create connection
-	    URL url = new URL(HOST + "Apartments/" + apt_id);
+	    URL url = new URL(HOST + "apartments/" + apt_id);
 	    connection = (HttpURLConnection)url.openConnection();
 	    connection.setRequestMethod("POST");
 		  connection.setDoOutput(true);
@@ -129,7 +309,7 @@ public class ServerCom
 	  HttpURLConnection connection = null;
 	  try {
 	    //Create connection
-	    URL url = new URL("http://sdchargers.herokuapp.com/Apartments/" + apt_id);
+	    URL url = new URL("http://sdchargers.herokuapp.com/apartments/" + apt_id);
 	    connection = (HttpURLConnection)url.openConnection();
 	    connection.setRequestMethod("GET");
 
