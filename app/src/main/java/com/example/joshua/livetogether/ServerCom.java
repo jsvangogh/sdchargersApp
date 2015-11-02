@@ -32,7 +32,7 @@ public class ServerCom
 					"application/x-www-form-urlencoded");
 
 	    	connection.setRequestProperty("Content-Length", 
-	        Integer.toString(username.getBytes().length) + password.getBytes().length);
+	        Integer.toString(args.getBytes().length));
 	    	connection.setRequestProperty("Content-Language", "en-US");  
 
 	    	connection.setUseCaches(false);
@@ -97,7 +97,7 @@ public class ServerCom
 					"application/x-www-form-urlencoded");
 
 	    	connection.setRequestProperty("Content-Length", 
-	        Integer.toString(username.getBytes().length) + password.getBytes().length);
+	        Integer.toString(args.getBytes().length));
 	    	connection.setRequestProperty("Content-Language", "en-US");  
 
 	    	connection.setUseCaches(false);
@@ -153,7 +153,7 @@ public class ServerCom
 
 		try {
 			//Create connection
-			URL url = new URL("http://sdchargers.herokuapp.com/join/");
+			URL url = new URL("http://sdchargers.herokuapp.com/join/" + userID);
 			connection = (HttpURLConnection)url.openConnection();
 			connection.setRequestMethod("POST");
 
@@ -191,6 +191,8 @@ public class ServerCom
 			JSONObject respJson = new JSONObject(response.toString());
 			JSONObject idObj = respJson.getJSONObject("_id");
 			String uid = idObj.getString("$oid");
+			if (uid.equals(""))
+				return null;
 			return uid;
 
 

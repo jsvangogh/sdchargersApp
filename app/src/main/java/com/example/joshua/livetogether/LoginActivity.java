@@ -3,6 +3,9 @@ package com.example.joshua.livetogether;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
@@ -21,6 +24,7 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
@@ -29,6 +33,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,8 +68,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
-
+    private String mUserID;
+    private String maptID;
+    private String name = null;
+    ApartmentRetriever mApartmentRetriever;
     private String user;
+    private Context mLoginThis;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +103,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });
 
+        mLoginThis = this;
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
     }
@@ -185,6 +195,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // There was an error; don't attempt login and focus the first
             // form field with an error.
             focusView.requestFocus();
+            return;
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
@@ -192,15 +203,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mAuthTask = new UserLoginTask(email, password);
             mAuthTask.execute((Void) null);
         }
-
-        if(user != null) {
-            Intent dashIntent = new Intent(this, Dash.class);
-            dashIntent.putExtra("com.example.joshua.livetogether.user", user);
-            startActivity(dashIntent);
-        }
     }
 
-    private void attemptRegister(View view)
+    public void attemptRegister(View view)
     {
         if (mRegTask != null) {
             return;
@@ -247,11 +252,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mRegTask.execute((Void) null);
         }
 
-        if(user != null) {
-            Intent dashIntent = new Intent(this, Dash.class);
-            dashIntent.putExtra("com.example.joshua.livetogether.user", user);
-            startActivity(dashIntent);
-        }
+        attemptLogin();
     }
 
     private boolean isEmailValid(String email) {
@@ -354,6 +355,28 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailView.setAdapter(adapter);
     }
 
+    private String showInputDialog() {
+        final EditText input = new EditText(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("No Apartment!");
+        builder.setMessage("No apartment associated with user! Please enter an apartment" +
+                " name to create an apartment");
+        builder.setView(input);
+
+//        while(name == null) {
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                name = input.getText().toString();
+                Toast.makeText(getBaseContext(), "Apartment Name: " + name, Toast.LENGTH_SHORT).show();
+                mApartmentRetriever = new ApartmentRetriever(name);
+                mApartmentRetriever.execute((Void) null);
+            }
+        });
+//        }
+        builder.show();
+        return name;
+    }
     /**
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
@@ -373,12 +396,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // TODO: attempt authentication against a network service.
 
             try {
-                 user = ServerCom.signIn(mEmail, mPassword);
-            } catch (InterruptedException e) {
+                 mUserID = ServerCom.signIn(mEmail, mPassword);
+            } catch (Exception e) {
                 return false;
             }
 
-            if (user == null) { return false; }
+            if (mUserID == null) { return false; }
 
             return true;
         }
@@ -386,14 +409,25 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         @Override
         protected void onPostExecute(final Boolean success) {
             mAuthTask = null;
-            showProgress(false);
 
-            if (success) {
-                finish(); // uncommented 7:22pm 10/31/15
-            } else {
+            if (!success) {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
             }
+            else{
+                String aptName = null;
+                mApartmentRetriever = new ApartmentRetriever(aptName);
+                mApartmentRetriever.execute((Void) null);
+
+
+                if(user != null && maptID != null) {
+                    Intent dashIntent = new Intent(mLoginThis, Dash.class);
+                    dashIntent.putExtra("com.example.joshua.livetogether.user", user);
+                    startActivity(dashIntent);
+                }
+            }
+
+            showProgress(false);
         }
 
         @Override
@@ -417,7 +451,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         protected Boolean doInBackground(Void... params) {
             try {
                 user = ServerCom.register(mEmail, mPassword);
-            } catch (InterruptedException e) {
+            } catch (Exception e) {
                 return false;
             }
 
@@ -429,9 +463,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mAuthTask = null;
             showProgress(false);
 
-            if (success) {
-                finish(); // uncommented 7:22pm 10/31/15
-            } else {
+            if (!success){
                 mEmailView.setError(getString(R.string.error_taken_email));
                 mEmailView.requestFocus();
             }
@@ -442,6 +474,52 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mAuthTask = null;
             showProgress(false);
         }
+    }
+
+    class ApartmentRetriever extends AsyncTask<Void, Void, Void> {
+        private String maptName = null;
+        Exception exception;
+
+        ApartmentRetriever(String aptName)
+        {
+            maptName = aptName;
+        }
+
+        @Override
+        protected Void doInBackground(Void... v) {
+
+            if(maptName == null) {
+                try {
+                    while (mUserID == null) { }
+                    maptID = ServerCom.getApartmentID(mUserID);
+                } catch (Exception e) {
+                    this.exception = e;
+                }
+            }
+            else{
+                try {
+                    maptID = ServerCom.setApartmentID(mUserID, maptName);
+                } catch (Exception e) {
+                    this.exception = e;
+                }
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void v)
+        {
+            if(maptID != null) {
+                Intent dashIntent = new Intent(mLoginThis, Dash.class);
+                dashIntent.putExtra("com.example.joshua.livetogether.aptID", maptID);
+                startActivity(dashIntent);
+            }
+            else{
+                showInputDialog();
+            }
+        }
+
     }
 }
 

@@ -10,35 +10,34 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.view.LayoutInflater;
+import android.widget.Toast;
 
 public class Dash extends AppCompatActivity {
 
     private String maptID = null;
     private String mUserID = null;
+    private String name = null;
     TaskRetriever mTaskRetriever;
-    ApartmentRetriever mApartmentRetriever;
+    //ApartmentRetriever mApartmentRetriever;
     TextView mTasksView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        String userID;
-
         setContentView(R.layout.activity_dash);
-        String aptName = null;
         // get the apartment ID from the login page
         Intent intent = getIntent();
-
-        mUserID = intent.getStringExtra("com.example.joshua.livetogether.user");
-        mApartmentRetriever = new ApartmentRetriever(aptName);
+        String aptName = null;
+        maptID = intent.getStringExtra("com.example.joshua.livetogether.aptID");
+        /*mApartmentRetriever = new ApartmentRetriever(aptName);
         mApartmentRetriever.execute((Void) null);
 
         while(maptID == null) {
+            aptName = showInputDialog();
             mApartmentRetriever = new ApartmentRetriever(aptName);
             mApartmentRetriever.execute((Void) null);
-            aptName = showInputDialog();
-        }
+        }*/
 
         mTasksView = (TextView) findViewById(R.id.Tasks);
     }
@@ -49,47 +48,57 @@ public class Dash extends AppCompatActivity {
         if (mTaskRetriever != null) {return;}
 
         super.onResume();
+
+        String aptName = null;
+
+        /*while(maptID == null) {
+            aptName = showInputDialog();
+            mApartmentRetriever = new ApartmentRetriever(aptName);
+            mApartmentRetriever.execute((Void) null);
+        }*/
+
         mTaskRetriever = new TaskRetriever();
         mTaskRetriever.execute((Void) null);
     }
 
     public void add(View view) {
         Intent addIntent = new Intent(this, AddTask.class);
-        addIntent.putExtra("com.example.joshua.livetogether.aptID", "56306f75129270000ac80798");
+        addIntent.putExtra("com.example.joshua.livetogether.aptID", maptID);
         startActivity(addIntent);
     }
 
-    public String showInputDialog() {
-        String name = null;
-        LayoutInflater layoutInflater = LayoutInflater.from(Dash.this);
-        View view  = layoutInflater.inflate(R.layout.input_dialog, null);
-        AlertDialog.Builder builder = new AlertDialog.Builder(Dash.this);
+    /*public String showInputDialog() {
+        name = null;
+        LayoutInflater layoutInflater = getLayoutInflater();
+        View alertLayout  = layoutInflater.inflate(R.layout.input_dialog, null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("No Apartment!");
         builder.setMessage("No apartment associated with user! Please enter an apartment" +
-                " name to create an apartmnet");
-        builder.setView(view);
-        final EditText input = (EditText) view.findViewById(R.id.editText10);
+                " name to create an apartment");
+        builder.setView(alertLayout);
+        final EditText input = (EditText) alertLayout.findViewById(R.id.editText10);
         //input.setInputType(InputType.TYPE_CLASS_TEXT);
         //builder.setView(input);
 
-        while(name == null) {
+//        while(name == null) {
             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     name = input.getText().toString();
+                    Toast.makeText(getBaseContext(), "Apartment Name: " + name, Toast.LENGTH_SHORT).show();
                 }
             });
-        }
+//        }
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
 
         return name;
-    }
+    }*/
 
 
     class TaskRetriever extends AsyncTask<Void, Void, Void> {
         String mtaskString[];
-        String mText;
+        String mText = "";
         Exception exception;
 
         @Override
@@ -106,7 +115,7 @@ public class Dash extends AppCompatActivity {
 
         protected void onPostExecute(Void v) {
             if (mtaskString == null) {
-                mtaskString = new String[]{"FUUUUUDGE"};
+                mtaskString = new String[]{"Error Loading"};
             }
 
             for (int i = 0; i < mtaskString.length; i++) {
@@ -114,16 +123,15 @@ public class Dash extends AppCompatActivity {
                 mText += "\n";
             }
 
-            mTasksView.setText(mText.replace( "\"", ""));
+            mTasksView.setText(mText);
 
             mTaskRetriever = null;
         }
     }
 
 
-    class ApartmentRetriever extends AsyncTask<Void, Void, Void> {
+    /*class ApartmentRetriever extends AsyncTask<Void, Void, Void> {
         private String maptName = null;
-        //String mAptID;
         Exception exception;
 
         ApartmentRetriever(String aptName)
@@ -136,7 +144,7 @@ public class Dash extends AppCompatActivity {
 
             if(maptName == null) {
                 try {
-                    maptID = ServerCom.getAparmentID(mUserID);
+                    maptID = ServerCom.getApartmentID(mUserID);
                 } catch (Exception e) {
                     this.exception = e;
                 }
@@ -153,6 +161,6 @@ public class Dash extends AppCompatActivity {
             return null;
         }
 
-    }
+    }*/
 
 }
