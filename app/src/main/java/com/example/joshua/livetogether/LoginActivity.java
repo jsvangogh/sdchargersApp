@@ -358,9 +358,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private String showInputDialog() {
         final EditText input = new EditText(this);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("No Apartment!");
-        builder.setMessage("No apartment associated with user! Please enter an apartment" +
-                " name to create an apartment");
+        builder.setTitle(R.string.no_apartment_title);
+        builder.setMessage(R.string.no_apartment_message);
         builder.setView(input);
 
 //        while(name == null) {
