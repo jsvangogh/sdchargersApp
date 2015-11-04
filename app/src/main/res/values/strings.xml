@@ -14,7 +14,7 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
-    <string name="no_apartment_title">No Apartment!k</string>
+    <string name="no_apartment_title">No Apartment!</string>
     <string name="no_apartment_message">"No apartment associated with user! Please enter an apartment
         name to join an apartment"
     </string>
