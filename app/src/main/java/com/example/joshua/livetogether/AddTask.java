@@ -45,11 +45,7 @@ public class AddTask extends AppCompatActivity {
     }
 
     class TaskAdder extends AsyncTask<Void, Void, Void> {
-        //String maptID;
-        //String mtaskString;
         Exception exception;
-
-
 
         @Override
         protected Void doInBackground(Void... v) {
