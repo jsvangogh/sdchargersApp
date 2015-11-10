@@ -81,11 +81,10 @@ public class ServerCom
 		HttpURLConnection connection = null;
 
 		// Prepare user registration info
-		username = "\"username\": \"" + username + "\"";
-		password = "\"password\": \"" + password + "\"";
-		String user = "user={" + username + ", " + password + "}";
-
-		String args = user;
+		username = "username=" + username;
+		password = "password=" + password;
+		
+		String args = username + "&" + password;	
 
 		try {
 			//Create connection
@@ -187,13 +186,13 @@ public class ServerCom
 			in.close();
 
 			// ---------------------
-			// PROCESS JSON RESPONSE
+			// PROCESS JSON RESPONSE - return apartment ID
 			JSONObject respJson = new JSONObject(response.toString());
 			JSONObject idObj = respJson.getJSONObject("_id");
-			String uid = idObj.getString("$oid");
-			if (uid.equals(""))
+			String aid = idObj.getString("$oid");
+			if (aid.equals(""))
 				return null;
-			return uid;
+			return aid;
 
 
 		} catch (Exception e) {
@@ -205,6 +204,72 @@ public class ServerCom
 			}
 		}
 	}
+
+
+	// Allow user to CREATE a new apartment and join it based on their User ID
+	public static String createApartment (String userID, String aptName) {
+		HttpURLConnection connection = null;
+		aptName = "aptName=" + aptName;
+
+		String args = aptName;
+
+		try {
+			//Create connection
+			URL url = new URL("http://sdchargers.herokuapp.com/create/" + userID);
+			connection = (HttpURLConnection)url.openConnection();
+			connection.setRequestMethod("POST");
+
+			connection.setRequestProperty("Content-Type",
+					"application/x-www-form-urlencoded");
+
+	    	connection.setRequestProperty("Content-Length", 
+	        Integer.toString(aptName.getBytes().length));
+	    	connection.setRequestProperty("Content-Language", "en-US");  
+
+	    	connection.setUseCaches(false);
+	    	connection.setDoOutput(true);
+
+	    	//Send request
+	    	DataOutputStream wr = new DataOutputStream (
+	        connection.getOutputStream());
+	    	wr.writeBytes(args);
+	    	wr.close();
+
+			int responseCode = connection.getResponseCode();
+
+			//Get Response
+			BufferedReader in = new BufferedReader(
+					new InputStreamReader(connection.getInputStream()));
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			in.close();
+
+			// ---------------------
+			if (response.equals("Apartment name is already taken!"))
+				return null;
+
+			// PROCESS JSON RESPONSE - return ID of new apt
+			JSONObject respJson = new JSONObject(response.toString());
+			String aid = respJson.getString("$oid");
+			if (aid.equals(""))
+				return null;
+			return aid;
+
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+			if(connection != null) {
+				connection.disconnect();
+			}
+		}
+	}
+
 
 
 	// Given a user ID, return the associated apartment ID
@@ -262,7 +327,7 @@ public class ServerCom
 
 	  try {
 	    //Create connection
-	    URL url = new URL(HOST + "apartments/" + apt_id);
+	    URL url = new URL(HOST + "tasks/" + apt_id);
 	    connection = (HttpURLConnection)url.openConnection();
 	    connection.setRequestMethod("POST");
 		  connection.setDoOutput(true);
@@ -307,11 +372,13 @@ public class ServerCom
 	  }
 	}
 
-	public static String[] getTasks (String apt_id) {
+
+	// Gets an array of tasks with descriptions and assignees
+	public static Task[] getTasks (String apt_id) {
 	  HttpURLConnection connection = null;
 	  try {
 	    //Create connection
-	    URL url = new URL("http://sdchargers.herokuapp.com/apartments/" + apt_id);
+	    URL url = new URL("http://sdchargers.herokuapp.com/tasks/" + apt_id);
 	    connection = (HttpURLConnection)url.openConnection();
 	    connection.setRequestMethod("GET");
 
@@ -336,10 +403,15 @@ public class ServerCom
 		// PROCESS JSON RESPONSE
 		JSONObject respJson = new JSONObject(response.toString());
 		JSONArray arr = respJson.getJSONArray("tasks");
-		String[] toReturn = new String[arr.length()];
+		String[] descriptions = new String[arr.length()];
+		String[] assignees = new String[arr.length()];
+		Task[] toReturn = new Task[arr.length()];
 		for (int i = 0; i < arr.length(); i++)
 		{
-			toReturn[i] = arr.getString(i);
+			JSONObject cur = arr.getJSONObject(i);
+			descriptions[i] = cur.getString("description");
+			assignees[i] = cur.getString("assignee");
+			toReturn[i] = new Task(assignees[i], descriptions[i]);
 		}
  		return toReturn;
 
