@@ -40,27 +40,24 @@
                 android:onClick="add" />
         </LinearLayout>
 
-        <ScrollView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/scrollView" >
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:baselineAligned="false">
 
-            <TextView
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/listView"
+                android:layout_weight=".5" />
+
+            <ListView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Loading"
-                android:id="@+id/Tasks"
-                android:layout_gravity="center_horizontal|left"
-                android:layout_marginLeft="30dp"
-                android:textColor="#ed000000" />
-        </ScrollView>
-
-        <GridView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/gridView"
-            android:layout_gravity="center_horizontal" />
+                android:id="@+id/listView2"
+                android:layout_weight=".5" />
+        </LinearLayout>
 
     </LinearLayout>
 

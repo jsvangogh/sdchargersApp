@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.GridView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 public class Dash extends AppCompatActivity {
@@ -13,7 +14,8 @@ public class Dash extends AppCompatActivity {
     private String maptID = null;
     TaskRetriever mTaskRetriever;
     TextView mTasksView;
-    GridView mTaskGrid;
+    ListView mMyTaskList;
+    ListView mTaskList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,7 +26,8 @@ public class Dash extends AppCompatActivity {
         Intent intent = getIntent();
         maptID = intent.getStringExtra("com.example.joshua.livetogether.aptID");
 
-        mTaskGrid = (GridView) findViewById(R.id.gridView);
+        mMyTaskList = (ListView) findViewById(R.id.listView);
+        mTaskList = (ListView) findViewById(R.id.listView2);
         mTasksView = (TextView) findViewById(R.id.Tasks);
     }
 
