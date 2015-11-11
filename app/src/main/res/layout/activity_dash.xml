@@ -47,16 +47,11 @@
             android:baselineAligned="false">
 
             <ListView
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/listView"
                 android:layout_weight=".5" />
 
-            <ListView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/listView2"
-                android:layout_weight=".5" />
         </LinearLayout>
 
     </LinearLayout>

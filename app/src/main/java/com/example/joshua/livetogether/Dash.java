@@ -9,13 +9,16 @@ import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 public class Dash extends AppCompatActivity {
 
     private String maptID = null;
-    TaskRetriever mTaskRetriever;
-    TextView mTasksView;
-    ListView mMyTaskList;
+    private TaskRetriever mTaskRetriever;
+    private TextView mTasksView;
+    ArrayList<Task> tasks = new ArrayList<Task>();
     ListView mTaskList;
+    TaskAdapter mTaskAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,9 +29,10 @@ public class Dash extends AppCompatActivity {
         Intent intent = getIntent();
         maptID = intent.getStringExtra("com.example.joshua.livetogether.aptID");
 
-        mMyTaskList = (ListView) findViewById(R.id.listView);
-        mTaskList = (ListView) findViewById(R.id.listView2);
-        mTasksView = (TextView) findViewById(R.id.Tasks);
+        mTaskList = (ListView) findViewById(R.id.listView);
+
+        mTaskAdapter = new TaskAdapter(this, R.layout.list_item, tasks);
+        mTaskList.setAdapter(mTaskAdapter);
     }
 
     // Update the task list on resume
@@ -49,15 +53,14 @@ public class Dash extends AppCompatActivity {
     }
 
     class TaskRetriever extends AsyncTask<Void, Void, Void> {
-        String mtaskString[];
-        String mText = "";
+        Task tempTasks[];
         Exception exception;
 
         @Override
         protected Void doInBackground(Void... v) {
 
             try {
-                mtaskString = ServerCom.getTasks(maptID);
+                tempTasks = ServerCom.getTasks(maptID);
             } catch (Exception e) {
                 this.exception = e;
             }
@@ -66,16 +69,15 @@ public class Dash extends AppCompatActivity {
         }
 
         protected void onPostExecute(Void v) {
-            if (mtaskString == null) {
-                mtaskString = new String[]{"Error Loading"};
+            mTaskAdapter.clear();
+
+            if (tempTasks.length == 0) {
+                mTaskAdapter.add(new Task("", "Error Loading"));
             }
 
-            for (int i = 0; i < mtaskString.length; i++) {
-                mText += mtaskString[i];
-                mText += "\n";
+            for (int i = 0; i < tempTasks.length; i++) {
+                mTaskAdapter.add(tempTasks[i]);
             }
-
-            mTasksView.setText(mText);
 
             mTaskRetriever = null;
         }
