@@ -21,17 +21,19 @@
         android:layout_width="125dp"
         android:layout_height="125dp"
         android:text="+"
-        android:id="@+id/button2"
+        android:id="@+id/createApt"
         android:layout_centerVertical="true"
         android:layout_alignStart="@+id/editText2"
-        android:textSize="100dp" />
+        android:textSize="100dp"
+        android:onClick="onClick" />
 
     <Button
         android:layout_width="125dp"
         android:layout_height="125dp"
         android:text="Join"
-        android:id="@+id/button3"
-        android:layout_alignTop="@+id/button2"
+        android:id="@+id/joinApt"
+        android:layout_alignTop="@+id/createApt"
         android:layout_alignEnd="@+id/editText2"
-        android:textSize="40dp" />
+        android:textSize="40dp"
+        android:onClick="onClick" />
 </RelativeLayout>

@@ -72,7 +72,7 @@ public class Dash extends AppCompatActivity {
             mTaskAdapter.clear();
 
             if (tempTasks.length == 0) {
-                mTaskAdapter.add(new Task("", "Error Loading"));
+                mTaskAdapter.add(new Task("", "No Tasks"));
             }
 
             for (int i = 0; i < tempTasks.length; i++) {

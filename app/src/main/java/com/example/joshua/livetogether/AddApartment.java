@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,6 +16,7 @@ public class AddApartment extends AppCompatActivity {
     private String mUserID = null;
     private String maptID = null;
     private Context mLoginThis;
+    EditText editTextName;
     JoinApartment mJoinApartment;
     CreateApartment mCreateApartment;
 
@@ -25,19 +25,19 @@ public class AddApartment extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_apartment);
         mLoginThis = this;
+        editTextName = (EditText)(findViewById(R.id.editText2));
         Intent intent = getIntent();
         mUserID = intent.getStringExtra("com.example.joshua.livetogether.user");
     }
 
     public void onClick(View view) {
-        final EditText editTextName = (EditText)(findViewById(R.id.editText2));
         name = editTextName.getText().toString();
         switch(view.getId()) {
-            case R.id.button2:
+            case R.id.createApt:
                 mCreateApartment = new CreateApartment(name);
                 mCreateApartment.execute((Void) null);
                 break;
-            case R.id.button3:
+            case R.id.joinApt:
                 mJoinApartment = new JoinApartment(name);
                 mJoinApartment.execute((Void) null);
                 break;
@@ -70,7 +70,7 @@ public class AddApartment extends AppCompatActivity {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Toast.makeText(AddApartment.this, "Apartment Created!", Toast.LENGTH_LONG).show();
+                finish();
             }
         });
 //        }
@@ -84,9 +84,8 @@ public class AddApartment extends AppCompatActivity {
         return name;
     }
 
-    class JoinApartment extends AsyncTask<Void, Void, Void> {
+    class JoinApartment extends AsyncTask<Void, Void, Boolean> {
         private String maptName = null;
-        String mText = "";
         Exception exception;
 
         JoinApartment(String aptName) {
@@ -94,15 +93,10 @@ public class AddApartment extends AppCompatActivity {
         }
 
         @Override
-        protected Void doInBackground(Void... v) {
+        protected Boolean doInBackground(Void... v) {
 
-            if(maptName == null) {
-                try {
-                    while (mUserID == null) { }
-                    maptID = ServerCom.getApartmentID(mUserID);
-                } catch (Exception e) {
-                    this.exception = e;
-                }
+            if(maptName.equals("")) {
+                return false;
             }
             else{
                 try {
@@ -112,24 +106,30 @@ public class AddApartment extends AppCompatActivity {
                 }
             }
 
-            return null;
+            return true;
         }
 
-        protected void onPostExecute(Void v) {
-            if(maptID != null) {
-                Intent dashIntent = new Intent(mLoginThis, Dash.class);
-                dashIntent.putExtra("com.example.joshua.livetogether.aptID", maptID);
-                startActivity(dashIntent);
+        protected void onPostExecute(Boolean input) {
+            if (input) {
+                if (maptID != null) {
+                    Intent dashIntent = new Intent(mLoginThis, Dash.class);
+                    dashIntent.putExtra("com.example.joshua.livetogether.aptID", maptID);
+                    startActivity(dashIntent);
+                    finish();
+                } else {
+                    showInputDialog();
+                }
             }
-            else{
-                showInputDialog();
+            else
+            {
+                editTextName.setError(getString(R.string.error_field_required));
+                editTextName.requestFocus();
             }
         }
     }
 
-    class CreateApartment extends AsyncTask<Void, Void, Void> {
+    class CreateApartment extends AsyncTask<Void, Void, Boolean> {
         private String maptName = null;
-        String mText = "";
         Exception exception;
 
         CreateApartment(String aptName) {
@@ -137,15 +137,10 @@ public class AddApartment extends AppCompatActivity {
         }
 
         @Override
-        protected Void doInBackground(Void... v) {
+        protected Boolean doInBackground(Void... v) {
 
-            if(maptName == null) {
-                try {
-                    while (mUserID == null) { }
-                    maptID = ServerCom.getApartmentID(mUserID);
-                } catch (Exception e) {
-                    this.exception = e;
-                }
+            if(maptName.equals("")) {
+                return false;
             }
             else{
                 try {
@@ -155,17 +150,25 @@ public class AddApartment extends AppCompatActivity {
                 }
             }
 
-            return null;
+            return true;
         }
 
-        protected void onPostExecute(Void v) {
-            if(maptID != null) {
-                Intent dashIntent = new Intent(mLoginThis, Dash.class);
-                dashIntent.putExtra("com.example.joshua.livetogether.aptID", maptID);
-                startActivity(dashIntent);
+        @Override
+        protected void onPostExecute(Boolean input) {
+            if(input) {
+                if (maptID != null) {
+                    Toast.makeText(AddApartment.this, "Apartment Created!", Toast.LENGTH_LONG).show();
+                    Intent dashIntent = new Intent(mLoginThis, Dash.class);
+                    dashIntent.putExtra("com.example.joshua.livetogether.aptID", maptID);
+                    startActivity(dashIntent);
+                    finish();
+                } else {
+                    Toast.makeText(AddApartment.this, "Apartment taken!", Toast.LENGTH_LONG).show();
+                }
             }
-            else{
-                showInputDialog2();
+            else {
+                editTextName.setError(getString(R.string.error_field_required));
+                editTextName.requestFocus();
             }
         }
     }
