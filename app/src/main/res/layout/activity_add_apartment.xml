@@ -15,6 +15,7 @@
         android:layout_marginTop="77dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
+        android:inputType="textLongMessage"
         android:textSize="40dp" />
 
     <Button
@@ -25,7 +26,8 @@
         android:layout_centerVertical="true"
         android:layout_alignStart="@+id/editText2"
         android:textSize="100dp"
-        android:onClick="onClick" />
+        android:onClick="onClick"
+        android:textAlignment="gravity" />
 
     <Button
         android:layout_width="125dp"
@@ -36,4 +38,5 @@
         android:layout_alignEnd="@+id/editText2"
         android:textSize="40dp"
         android:onClick="onClick" />
+
 </RelativeLayout>
