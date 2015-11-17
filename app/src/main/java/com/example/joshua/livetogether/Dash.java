@@ -5,7 +5,7 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.GridView;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -15,7 +15,6 @@ public class Dash extends AppCompatActivity {
 
     private String maptID = null;
     private TaskRetriever mTaskRetriever;
-    private TextView mTasksView;
     ArrayList<Task> tasks = new ArrayList<Task>();
     ListView mTaskList;
     TaskAdapter mTaskAdapter;
@@ -30,7 +29,14 @@ public class Dash extends AppCompatActivity {
         maptID = intent.getStringExtra("com.example.joshua.livetogether.aptID");
 
         mTaskList = (ListView) findViewById(R.id.listView);
-
+        mTaskList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Task task = (Task) mTaskList.getItemAtPosition(position);
+                TaskRemover mTaskRemover = new TaskRemover();
+                mTaskRemover.execute();
+            }
+        });
         mTaskAdapter = new TaskAdapter(this, R.layout.list_item, tasks);
         mTaskList.setAdapter(mTaskAdapter);
     }
@@ -61,6 +67,37 @@ public class Dash extends AppCompatActivity {
 
             try {
                 tempTasks = ServerCom.getTasks(maptID);
+            } catch (Exception e) {
+                this.exception = e;
+            }
+
+            return null;
+        }
+
+        protected void onPostExecute(Void v) {
+            mTaskAdapter.clear();
+
+            if (tempTasks.length == 0) {
+                mTaskAdapter.add(new Task("", "No Tasks"));
+            }
+
+            for (int i = 0; i < tempTasks.length; i++) {
+                mTaskAdapter.add(tempTasks[i]);
+            }
+
+            mTaskRetriever = null;
+        }
+    }
+
+    class TaskRemover extends AsyncTask<Void, Void, Void> {
+        Task tempTasks[];
+        Exception exception;
+
+        @Override
+        protected Void doInBackground(Void... v) {
+
+            try {
+                tempTasks = ServerCom.Tasks(maptID);
             } catch (Exception e) {
                 this.exception = e;
             }
