@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">LiveTogether</string>
+    <string name="app_name">Broom Mates</string>
     
     <!-- Strings related to login -->
     <string name="prompt_email">Username</string>

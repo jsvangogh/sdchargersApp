@@ -33,7 +33,7 @@ public class Dash extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Task task = (Task) mTaskList.getItemAtPosition(position);
-                TaskRemover mTaskRemover = new TaskRemover();
+                TaskRemover mTaskRemover = new TaskRemover(task, position);
                 mTaskRemover.execute();
             }
         });
@@ -90,14 +90,21 @@ public class Dash extends AppCompatActivity {
     }
 
     class TaskRemover extends AsyncTask<Void, Void, Void> {
-        Task tempTasks[];
+        Task tempTask;
+        int listPosition;
         Exception exception;
+
+        TaskRemover(Task task, int position)
+        {
+            tempTask = task;
+            listPosition = position;
+        }
 
         @Override
         protected Void doInBackground(Void... v) {
 
             try {
-                tempTasks = ServerCom.Tasks(maptID);
+                ServerCom.removeTask(maptID, tempTask.getDescription(), tempTask.getAssignee());
             } catch (Exception e) {
                 this.exception = e;
             }
@@ -106,17 +113,7 @@ public class Dash extends AppCompatActivity {
         }
 
         protected void onPostExecute(Void v) {
-            mTaskAdapter.clear();
-
-            if (tempTasks.length == 0) {
-                mTaskAdapter.add(new Task("", "No Tasks"));
-            }
-
-            for (int i = 0; i < tempTasks.length; i++) {
-                mTaskAdapter.add(tempTasks[i]);
-            }
-
-            mTaskRetriever = null;
+            mTaskAdapter.remove(tempTask);
         }
     }
 }
