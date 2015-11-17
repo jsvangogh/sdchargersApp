@@ -323,7 +323,7 @@ public class ServerCom
 	// Given an apartment ID and a task string, add it to the list
 	public static String addTask (String apt_id, String task) {
 	  HttpURLConnection connection = null;  
-	  task = "task=" + task;
+	  task = "description=" + task;
 
 	  try {
 	    //Create connection
@@ -345,6 +345,62 @@ public class ServerCom
 	    DataOutputStream wr = new DataOutputStream (
 	        connection.getOutputStream());
 	    wr.writeBytes(task);
+	    wr.close();
+
+	    int responseCode = connection.getResponseCode();
+
+	    //Get Response  
+		BufferedReader in = new BufferedReader(
+		        new InputStreamReader(connection.getInputStream()));
+		String inputLine;
+		StringBuffer response = new StringBuffer();
+
+		while ((inputLine = in.readLine()) != null) {
+			response.append(inputLine);
+		}
+		in.close();
+ 		return (response.toString());
+
+	    
+	  } catch (Exception e) {
+	    e.printStackTrace();
+	    return null;
+	  } finally {
+	    if(connection != null) {
+	      connection.disconnect(); 
+	    }
+	  }
+	}
+
+
+	// REMOVE a task by apartment ID and, description, and assignee
+	public static String removeTask (String apt_id, String desc,
+		String assign)
+	{
+	  HttpURLConnection connection = null;  
+	  desc = "description=" + desc;
+	  assign = "assignee=" + assign;
+
+	  String args = desc + "&" + assign;
+
+	  try {
+	    //Create connection
+	    URL url = new URL(HOST + "tasks/" + apt_id);
+	    connection = (HttpURLConnection)url.openConnection();
+	    connection.setRequestMethod("DELETE");
+	    connection.setRequestProperty("Content-Type", 
+	        "application/x-www-form-urlencoded");
+
+	    connection.setUseCaches(false);
+	    connection.setDoOutput(true);
+	    connection.setRequestProperty("Content-Length", 
+	        Integer.toString(args.getBytes().length));
+	    connection.setRequestProperty("Content-Language", "en-US");  
+
+	    //Send request
+	    DataOutputStream wr = new DataOutputStream (
+	        connection.getOutputStream());
+	    wr.writeBytes(args);
 	    wr.close();
 
 	    int responseCode = connection.getResponseCode();
@@ -411,6 +467,7 @@ public class ServerCom
 			JSONObject cur = arr.getJSONObject(i);
 			descriptions[i] = cur.getString("description");
 			assignees[i] = cur.getString("assignee");
+			//********************* NEED THIS assignees[i] = assignees[i].substring(assignees[i].indexOf('@'));
 			toReturn[i] = new Task(assignees[i], descriptions[i]);
 		}
  		return toReturn;
