@@ -1,5 +1,6 @@
 package com.example.joshua.livetogether;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ public class AddTask extends AppCompatActivity {
     private String task = "";
     private String mAptID = "";
     private TaskAdder mTask;
+    private Context mLoginThis;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +30,7 @@ public class AddTask extends AppCompatActivity {
         setContentView(R.layout.activity_add_task);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        mLoginThis = this;
         Intent intent = getIntent();
         mAptID = intent.getStringExtra("com.example.joshua.livetogether.aptID");
 
@@ -38,10 +40,15 @@ public class AddTask extends AppCompatActivity {
         final EditText editTextName = (EditText)(findViewById(R.id.editText));
 
         task = editTextName.getText().toString();
-
-        mTask = new TaskAdder();
-        mTask.execute((Void) null);
-        finish();
+        if(task.equals("")) {
+            editTextName.setError(getString(R.string.error_field_required));
+            editTextName.requestFocus();
+        }
+        else {
+            mTask = new TaskAdder();
+            mTask.execute((Void) null);
+            finish();
+        }
     }
 
     class TaskAdder extends AsyncTask<Void, Void, Void> {
