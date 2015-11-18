@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.TextView;
+//import android.widget.Toolbar;
+import android.support.v7.widget.Toolbar;
 
 import java.util.ArrayList;
 
@@ -23,8 +25,9 @@ public class Dash extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_dash);
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
         // get the apartment ID from the login page
         Intent intent = getIntent();
         maptID = intent.getStringExtra("com.example.joshua.livetogether.aptID");
