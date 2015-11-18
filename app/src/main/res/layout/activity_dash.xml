@@ -14,53 +14,32 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true">
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Tasks"
-                android:id="@+id/textView"
-                android:textSize="30dp"
-                android:layout_weight=".7"
-                android:typeface="normal"
-                android:textStyle="bold" />
-
-            <Button
-                style="?android:attr/buttonStyleSmall"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Add Task"
-                android:id="@+id/addButton"
-                android:onClick="add" />
-        </LinearLayout>
-
-        <ScrollView
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/scrollView" >
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Tasks"
+            android:id="@+id/textView"
+            android:textSize="30sp"
+            android:typeface="normal"
+            android:textStyle="bold"
+            android:layout_gravity="center_horizontal" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Loading"
-                android:id="@+id/Tasks"
-                android:layout_gravity="center_horizontal|left"
-                android:layout_marginLeft="30dp"
-                android:textColor="#ed000000" />
-        </ScrollView>
-
-        <GridView
+        <Button
+            style="?android:attr/buttonStyleSmall"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/gridView"
+            android:text="Add Task"
+            android:id="@+id/addButton"
+            android:onClick="add"
+            android:singleLine="true"
             android:layout_gravity="center_horizontal" />
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/listView"
+            android:layout_weight=".5" />
 
     </LinearLayout>
 

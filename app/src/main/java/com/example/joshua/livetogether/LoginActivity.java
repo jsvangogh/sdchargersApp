@@ -251,8 +251,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mRegTask = new UserRegisterTask(email, password);
             mRegTask.execute((Void) null);
         }
-
-        attemptLogin();
     }
 
     private boolean isEmailValid(String email) {
@@ -412,21 +410,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             if (!success) {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
+                showProgress(false);
             }
             else{
                 String aptName = null;
                 mApartmentRetriever = new ApartmentRetriever(aptName);
                 mApartmentRetriever.execute((Void) null);
-
-
-                if(user != null && maptID != null) {
-                    Intent dashIntent = new Intent(mLoginThis, Dash.class);
-                    dashIntent.putExtra("com.example.joshua.livetogether.user", user);
-                    startActivity(dashIntent);
-                }
             }
-
-            showProgress(false);
         }
 
         @Override
@@ -462,9 +452,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mAuthTask = null;
             showProgress(false);
 
-            if (!success){
+            if (user == null){
                 mEmailView.setError(getString(R.string.error_taken_email));
                 mEmailView.requestFocus();
+            }
+            else {
+                attemptLogin();
             }
         }
 
@@ -489,7 +482,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             if(maptName == null) {
                 try {
-                    while (mUserID == null) { }
                     maptID = ServerCom.getApartmentID(mUserID);
                 } catch (Exception e) {
                     this.exception = e;
@@ -509,13 +501,19 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         @Override
         protected void onPostExecute(Void v)
         {
+            showProgress(false);
+
             if(maptID != null) {
                 Intent dashIntent = new Intent(mLoginThis, Dash.class);
                 dashIntent.putExtra("com.example.joshua.livetogether.aptID", maptID);
                 startActivity(dashIntent);
+                finish();
             }
             else{
-                showInputDialog();
+                Intent needApartment = new Intent(mLoginThis, AddApartment.class);
+                needApartment.putExtra("com.example.joshua.livetogether.user", user);
+                startActivity(needApartment);
+                finish();
             }
         }
 
