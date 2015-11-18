@@ -23,7 +23,7 @@
         android:onClick="allTasks"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:text="Show Tasks"/>
+        android:text="All Tasks"/>
 
         <Button
             android:layout_width="wrap_content"
