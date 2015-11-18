@@ -20,6 +20,7 @@ public class Dash extends AppCompatActivity {
     ArrayList<Task> tasks = new ArrayList<Task>();
     ListView mTaskList;
     TaskAdapter mTaskAdapter;
+    String currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,14 +31,17 @@ public class Dash extends AppCompatActivity {
         // get the apartment ID from the login page
         Intent intent = getIntent();
         maptID = intent.getStringExtra("com.example.joshua.livetogether.aptID");
+        currentUser = intent.getStringExtra("com.example.joshua.livetogether.user");
 
         mTaskList = (ListView) findViewById(R.id.listView);
         mTaskList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Task task = (Task) mTaskList.getItemAtPosition(position);
-                TaskRemover mTaskRemover = new TaskRemover(task, position);
-                mTaskRemover.execute();
+                if(task.getAssignee().equals(currentUser)) {
+                    TaskRemover mTaskRemover = new TaskRemover(task, position);
+                    mTaskRemover.execute();
+                }
             }
         });
         mTaskAdapter = new TaskAdapter(this, R.layout.list_item, tasks);

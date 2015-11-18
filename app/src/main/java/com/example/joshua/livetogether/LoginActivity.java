@@ -366,7 +366,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             public void onClick(DialogInterface dialog, int which) {
                 name = input.getText().toString();
                 Toast.makeText(getBaseContext(), "Apartment Name: " + name, Toast.LENGTH_SHORT).show();
-                mApartmentRetriever = new ApartmentRetriever(name);
+                mApartmentRetriever = new ApartmentRetriever(name, null);
                 mApartmentRetriever.execute((Void) null);
             }
         });
@@ -414,7 +414,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
             else{
                 String aptName = null;
-                mApartmentRetriever = new ApartmentRetriever(aptName);
+                mApartmentRetriever = new ApartmentRetriever(aptName, mEmail);
                 mApartmentRetriever.execute((Void) null);
             }
         }
@@ -470,11 +470,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     class ApartmentRetriever extends AsyncTask<Void, Void, Void> {
         private String maptName = null;
+        private String curUser;
         Exception exception;
 
-        ApartmentRetriever(String aptName)
+        ApartmentRetriever(String aptName, String username)
         {
             maptName = aptName;
+            curUser = username;
         }
 
         @Override
@@ -506,6 +508,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             if(maptID != null) {
                 Intent dashIntent = new Intent(mLoginThis, Dash.class);
                 dashIntent.putExtra("com.example.joshua.livetogether.aptID", maptID);
+                dashIntent.putExtra("com.example.joshua.livetogether.user", curUser);
                 startActivity(dashIntent);
                 finish();
             }
