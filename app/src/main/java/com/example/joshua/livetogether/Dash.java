@@ -61,6 +61,14 @@ public class Dash extends AppCompatActivity {
         startActivity(addIntent);
     }
 
+    public void allTasks(View view) {
+
+    }
+
+    public void myTasks(View view) {
+
+    }
+
     class TaskRetriever extends AsyncTask<Void, Void, Void> {
         Task tempTasks[];
         Exception exception;
