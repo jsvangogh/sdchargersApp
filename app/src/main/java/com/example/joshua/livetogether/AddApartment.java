@@ -158,6 +158,8 @@ public class AddApartment extends AppCompatActivity {
             if(input) {
                 if (maptID != null) {
                     Toast.makeText(AddApartment.this, "Apartment Created!", Toast.LENGTH_LONG).show();
+                    JoinApartment joinApartment = new JoinApartment(maptName);
+                    joinApartment.execute();
                     Intent dashIntent = new Intent(mLoginThis, Dash.class);
                     dashIntent.putExtra("com.example.joshua.livetogether.aptID", maptID);
                     startActivity(dashIntent);
