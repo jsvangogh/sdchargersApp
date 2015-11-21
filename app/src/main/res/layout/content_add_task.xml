@@ -15,10 +15,12 @@
         android:layout_width="wrap_content"
         android:layout_height="61dp"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Task Name: "
+        android:text="Task Name"
         android:id="@+id/textView"
         android:textSize="40dp"
-        android:textColor="#000000" />
+        android:textColor="#000000"
+        android:layout_alignTop="@+id/linearLayout"
+        android:layout_centerHorizontal="true" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -26,25 +28,73 @@
         android:inputType="textMultiLine"
         android:ems="10"
         android:id="@+id/editText"
-        android:layout_below="@+id/textView"
-        android:layout_alignParentStart="true"
-        android:layout_alignEnd="@+id/button"
         android:textSize="30dp"
         android:background="#dcadadad"
-        android:textColor="#000000" />
+        android:textColor="#000000"
+        android:layout_below="@+id/textView"
+        android:layout_alignParentStart="true" />
+
+    <CheckBox android:id="@+id/add_task_frequency"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/add_task_frequency_dialogue"
+        android:checked="false"
+        android:layout_marginTop="37dp"
+        android:layout_below="@+id/editText"
+        android:layout_toStartOf="@+id/add_task_hard" />
+
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Ok"
         android:id="@+id/button"
-        android:layout_marginTop="41dp"
         android:background="#888787"
         android:clickable="true"
         android:onClick="submitForm"
-        android:layout_below="@+id/editText"
-        android:layout_alignParentEnd="true"
         android:textSize="25dp"
-        android:textColor="#ffffff" />
+        android:textColor="#ffffff"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="106dp" />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_weight=".5"
+        android:id="@+id/linearLayout" >
+
+    </LinearLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/add_task_dialogue_difficulty_medium"
+        android:id="@+id/add_task_medium"
+        android:textColorHighlight="#FFFFFF"
+        android:layout_centerVertical="true"
+        android:layout_alignStart="@+id/button"
+        android:onClick="setMedium"
+        android:background="#EEEEEE" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/add_task_dialogue_difficulty_hard"
+        android:id="@+id/add_task_hard"
+        android:layout_alignTop="@+id/add_task_medium"
+        android:layout_alignEnd="@+id/editText"
+        android:onClick="setHard"
+        android:background="#EEEEEE" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/add_task_dialogue_difficulty_easy"
+        android:id="@+id/add_task_easy"
+        android:layout_alignTop="@+id/add_task_medium"
+        android:layout_toStartOf="@+id/add_task_frequency"
+        android:onClick="setEasy"
+        android:background="#CCCCCC" />
 
 </RelativeLayout>

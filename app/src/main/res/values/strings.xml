@@ -26,5 +26,13 @@
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_dash">Dash</string>
+    <string name="add_apartment_dialogue">Enter name of apartment you would like to join or create</string>
     <string name="add_task">Add Task</string>
+    <string name="add_task_dialogue_name">Insert the name of the task you would like to add</string>
+    <string name="add_task_frequency_dialogue">Is this a one time task?</string>
+    <string name="add_task_dialogue_difficulty">How difficult is this task?</string>
+    <string name="add_task_dialogue_difficulty_easy">easy</string>
+    <string name="add_task_dialogue_difficulty_medium">medium</string>
+    <string name="add_task_dialogue_difficulty_hard">hard</string>
+
 </resources>
