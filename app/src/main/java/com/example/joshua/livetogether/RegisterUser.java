@@ -51,8 +51,8 @@ public class RegisterUser extends AppCompatActivity {
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
-    private UserLoginTask mAuthTask = null;
-    private UserRegisterTask mRegTask = null;
+    //private UserLoginTask mAuthTask = null;
+    private RegisterTask mRegTask = null;
 
     // UI references.
     private AutoCompleteTextView mEmailView;
@@ -62,10 +62,9 @@ public class RegisterUser extends AppCompatActivity {
     private View mLoginFormView;
     private String mUserID;
     private String maptID;
-    private int mPhoneNum;
+    private String mPhoneNum;
     private String name = null;
-    ApartmentRetriever mApartmentRetriever;
-    private String user;
+    private User user;
     private Context mLoginThis;
 
     @Override
@@ -219,7 +218,7 @@ public class RegisterUser extends AppCompatActivity {
         // Store values at the time of the login attempt.
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
-        int phoneNumber = Integer.valueOf(mPhoneView.getText().toString());
+        String phoneNumber = mPhoneView.getText().toString();
         boolean cancel = false;
         View focusView = null;
 
@@ -249,7 +248,7 @@ public class RegisterUser extends AppCompatActivity {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mRegTask = new UserRegisterTask(email, password);
+            mRegTask = new RegisterTask(email, password, phoneNumber);
             mRegTask.execute((Void) null);
         }
 
@@ -361,20 +360,24 @@ public class RegisterUser extends AppCompatActivity {
     }
 
     private String showInputDialog() {
-        final EditText input = new EditText(this);
+        //final EditText input = new EditText(this);
+        String confirmationCode = "" + user.getConfirm();
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.no_apartment_title);
-        builder.setMessage(R.string.no_apartment_message);
-        builder.setView(input);
+        builder.setTitle(R.string.confirmation_code);
+        builder.setMessage(confirmationCode);
+        //builder.setView(input);
 
 //        while(name == null) {
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("Dismiss", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                name = input.getText().toString();
-                Toast.makeText(getBaseContext(), "Apartment Name: " + name, Toast.LENGTH_SHORT).show();
-                mApartmentRetriever = new ApartmentRetriever(name, null);
-                mApartmentRetriever.execute((Void) null);
+                Toast.makeText(getBaseContext(), "Add apartment next", Toast.LENGTH_SHORT).show();
+                //mApartmentRetriever = new ApartmentRetriever(name, mRegTask.mEmail);
+                //mApartmentRetriever.execute((Void) null);
+                Intent needApartment = new Intent(mLoginThis, AddApartment.class);
+                needApartment.putExtra("com.example.joshua.livetogether.user", user);
+                startActivity(needApartment);
+                finish();
             }
         });
 //        }
@@ -385,7 +388,7 @@ public class RegisterUser extends AppCompatActivity {
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+    /*public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
         private final String mEmail;
         private final String mPassword;
@@ -431,22 +434,24 @@ public class RegisterUser extends AppCompatActivity {
             mAuthTask = null;
             showProgress(false);
         }
-    }
+    }*/
 
-    public class UserRegisterTask extends AsyncTask<Void, Void, Boolean> {
+    public class RegisterTask extends AsyncTask<Void, Void, Boolean> {
 
         private final String mEmail;
         private final String mPassword;
+        private final String mpNumber;
 
-        UserRegisterTask(String email, String password) {
+        RegisterTask(String email, String password, String pNumber) {
             mEmail = email;
             mPassword = password;
+            mpNumber = pNumber;
         }
 
         @Override
         protected Boolean doInBackground(Void... params) {
             try {
-                user = ServerCom.register(mEmail, mPassword);
+                user = ServerCom.register(mEmail, mPassword, mpNumber);
             } catch (Exception e) {
                 return false;
             }
@@ -456,7 +461,7 @@ public class RegisterUser extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(final Boolean success) {
-            mAuthTask = null;
+            //mAuthTask = null;
             showProgress(false);
 
             if (user == null){
@@ -464,18 +469,18 @@ public class RegisterUser extends AppCompatActivity {
                 mEmailView.requestFocus();
             }
             else {
-                attemptLogin();
+                showInputDialog();
             }
         }
 
         @Override
         protected void onCancelled() {
-            mAuthTask = null;
+            //mAuthTask = null;
             showProgress(false);
         }
     }
 
-    class ApartmentRetriever extends AsyncTask<Void, Void, Void> {
+    /*class ApartmentRetriever extends AsyncTask<Void, Void, Void> {
         private String maptName = null;
         private String curUser;
         Exception exception;
@@ -527,5 +532,5 @@ public class RegisterUser extends AppCompatActivity {
             }
         }
 
-    }
+    }*/
 }

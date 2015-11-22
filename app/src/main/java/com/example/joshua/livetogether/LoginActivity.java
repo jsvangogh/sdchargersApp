@@ -61,7 +61,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * Keep track of the login task to ensure we can cancel it if requested.
      */
     private UserLoginTask mAuthTask = null;
-    private UserRegisterTask mRegTask = null;
+    //private UserRegisterTask mRegTask = null;
 
     // UI references.
     private AutoCompleteTextView mEmailView;
@@ -170,6 +170,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
 
+
         boolean cancel = false;
         View focusView = null;
 
@@ -196,7 +197,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // form field with an error.
             focusView.requestFocus();
             return;
-        } else {
+        }
+        else if(email.equals("")) {
+            mEmailView.setError(R.string.error_invalid_email);
+        }
+        else if(password.equals("")) {
+            mPasswordView.setError(R.string.error_invalid_password);
+        }
+        else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
@@ -252,10 +260,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mRegTask.execute((Void) null);
         }*/
 
-        Intent dashIntent = new Intent(mLoginThis, RegisterUser.class);
+        Intent registerIntent = new Intent(mLoginThis, RegisterUser.class);
         //dashIntent.putExtra("com.example.joshua.livetogether.aptID", maptID);
         //dashIntent.putExtra("com.example.joshua.livetogether.user", user);
-        startActivity(dashIntent);
+        startActivity(registerIntent);
         finish();
     }
 
@@ -430,7 +438,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 
-    public class UserRegisterTask extends AsyncTask<Void, Void, Boolean> {
+    /*public class UserRegisterTask extends AsyncTask<Void, Void, Boolean> {
 
         private final String mEmail;
         private final String mPassword;
@@ -470,7 +478,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mAuthTask = null;
             showProgress(false);
         }
-    }
+    }*/
 
     class ApartmentRetriever extends AsyncTask<Void, Void, Void> {
         private String maptName = null;
@@ -516,6 +524,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 startActivity(dashIntent);
                 finish();
             }
+            //To be changed or deleted
             else{
                 Intent needApartment = new Intent(mLoginThis, AddApartment.class);
                 needApartment.putExtra("com.example.joshua.livetogether.user", user);
