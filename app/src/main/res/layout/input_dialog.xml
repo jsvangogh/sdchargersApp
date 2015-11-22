@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Enter Name of Apartment"
-        android:id="@+id/textView" />
+        android:id="@+id/curTaskView" />
 
     <EditText
         android:layout_width="fill_parent"
