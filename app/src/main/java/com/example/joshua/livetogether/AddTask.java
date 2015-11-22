@@ -36,6 +36,7 @@ public class AddTask extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_task);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mLoginThis = this;
@@ -93,7 +94,7 @@ public class AddTask extends AppCompatActivity {
         protected Void doInBackground(Void... v) {
 
             try {
-                ServerCom.addTask(mAptID,task_name/*,weight,check_status*/);
+                ServerCom.addTask(mAptID,task_name,weight,check_status);
                 //System.out.println(mtaskString);
             } catch (Exception e) {
                 this.exception = e;

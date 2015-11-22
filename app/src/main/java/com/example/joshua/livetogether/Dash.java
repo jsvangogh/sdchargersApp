@@ -15,24 +15,31 @@ import java.util.ArrayList;
 
 public class Dash extends AppCompatActivity {
 
-    private String maptID = null;
+    private String maptID;
     private TaskRetriever mTaskRetriever;
-    ArrayList<Task> tasks = new ArrayList<Task>();
+    ArrayList<Task> tasks = new ArrayList<>();
     ListView mTaskList;
-    TaskAdapter mTaskAdapter;
-    String currentUser;
+    TaskAdapter mTaskAdapter; // adapter for listview
+    String currentUser; // name of current user
+    Boolean mMyTasks; // false = alltasks, true = myTasks
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //Toolbar setup
         setContentView(R.layout.activity_dash);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
+
         // get the apartment ID from the login page
         Intent intent = getIntent();
         maptID = intent.getStringExtra("com.example.joshua.livetogether.aptID");
         currentUser = intent.getStringExtra("com.example.joshua.livetogether.user");
 
+        mMyTasks = false;
+
+        // set up listview and its adapter
         mTaskList = (ListView) findViewById(R.id.listView);
         mTaskList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -66,11 +73,13 @@ public class Dash extends AppCompatActivity {
     }
 
     public void allTasks(View view) {
-
+        mMyTasks = false;
+        onResume();
     }
 
     public void myTasks(View view) {
-
+        mMyTasks = true;
+        onResume();
     }
 
     class TaskRetriever extends AsyncTask<Void, Void, Void> {
@@ -91,13 +100,31 @@ public class Dash extends AppCompatActivity {
 
         protected void onPostExecute(Void v) {
             mTaskAdapter.clear();
+            boolean empty = true;
 
-            if (tempTasks.length == 0) {
-                mTaskAdapter.add(new Task("", "No Tasks"));
+            TextView taskTitle = (TextView) findViewById(R.id.curTaskView);
+
+            if(!mMyTasks) {
+                taskTitle.setText(R.string.all_tasks);
+            }
+            else {
+                taskTitle.setText(R.string.my_tasks);
             }
 
             for (int i = 0; i < tempTasks.length; i++) {
-                mTaskAdapter.add(tempTasks[i]);
+                if(mMyTasks && tempTasks[i].getAssignee().equals(currentUser)) {
+                    mTaskAdapter.add(tempTasks[i]);
+                    empty = false;
+                }
+                else if(mMyTasks == false)
+                {
+                    mTaskAdapter.add(tempTasks[i]);
+                    empty = false;
+                }
+            }
+
+            if (empty) {
+                mTaskAdapter.add(new Task("", "No Tasks"));
             }
 
             mTaskRetriever = null;
