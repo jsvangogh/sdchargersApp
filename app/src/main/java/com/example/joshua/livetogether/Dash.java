@@ -104,7 +104,7 @@ public class Dash extends AppCompatActivity {
 
             TextView taskTitle = (TextView) findViewById(R.id.curTaskView);
 
-            if(mMyTasks) {
+            if(!mMyTasks) {
                 taskTitle.setText(R.string.all_tasks);
             }
             else {

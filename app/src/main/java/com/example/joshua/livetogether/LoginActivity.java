@@ -72,7 +72,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private String maptID;
     private String name = null;
     ApartmentRetriever mApartmentRetriever;
-    private String user;
+    private User user;
     private Context mLoginThis;
 
     @Override
@@ -451,7 +451,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         @Override
         protected Boolean doInBackground(Void... params) {
             try {
-                user = ServerCom.register(mEmail, mPassword);
+                user = ServerCom.register(mEmail, mPassword, "1234567890");
             } catch (Exception e) {
                 return false;
             }
@@ -527,7 +527,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             //To be changed or deleted
             else{
                 Intent needApartment = new Intent(mLoginThis, AddApartment.class);
-                needApartment.putExtra("com.example.joshua.livetogether.user", user);
+                needApartment.putExtra("com.example.joshua.livetogether.user", user.getUID());
                 startActivity(needApartment);
                 finish();
             }
