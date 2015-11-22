@@ -360,7 +360,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         builder.setMessage(R.string.no_apartment_message);
         builder.setView(input);
 
-//        while(name == null) {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -370,7 +369,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 mApartmentRetriever.execute((Void) null);
             }
         });
-//        }
         builder.show();
         return name;
     }
