@@ -49,7 +49,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Tasks"
-            android:id="@+id/textView"
+            android:id="@+id/curTaskView"
             android:textSize="30sp"
             android:typeface="normal"
             android:textStyle="bold"
