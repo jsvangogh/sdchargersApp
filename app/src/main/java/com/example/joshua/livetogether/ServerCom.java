@@ -77,14 +77,23 @@ public class ServerCom
 
 
 	// Register a new user
-	public static String register (String username, String password) {
+	public static User register (String username, String password, String phoneNum) {
 		HttpURLConnection connection = null;
 
 		// Prepare user registration info
 		username = "username=" + username;
 		password = "password=" + password;
+
+		if (phoneNum.length() < 10)
+			return null;
+		phoneNum = phoneNum.replace("(","");
+		phoneNum = phoneNum.replace(")","");
+		phoneNum = phoneNum.replace("-","");
+		phoneNum = phoneNum.replace(" ","");
+		phoneNum = "+1" + phoneNum.substring(phoneNum.length()-10);		
+		String phone = "phonenum=" + phoneNum;
 		
-		String args = username + "&" + password;	
+		String args = username + "&" + password + "&" + phone;
 
 		try {
 			//Create connection
@@ -122,14 +131,17 @@ public class ServerCom
 			in.close();
 
 			// ---------------------
-			// PROCESS JSON RESPONSE
+			// PROCESS JSON RESPONSE -- wrap
 			// If username was taken return null
 			if (response.toString().equals("\"Username is already taken!\""))
 				return null;
 
 			JSONObject respJson = new JSONObject(response.toString());
-			String uid = respJson.getString("$oid");
-			return uid;
+			System.out.println(respJson);
+			String uid = respJson.getJSONObject("_id").getString("$oid");
+			int conf = respJson.getInt("confirm");
+			User returned = new User(uid, conf);
+			return returned;
 
 
 		} catch (Exception e) {
@@ -253,8 +265,10 @@ public class ServerCom
 				return null;
 
 			// PROCESS JSON RESPONSE - return ID of new apt
+			System.out.println(response);
 			JSONObject respJson = new JSONObject(response.toString());
-			String aid = respJson.getString("$oid");
+			String aid = respJson.getJSONObject("_id").getString("$oid");
+			System.out.println(aid);
 			if (aid.equals(""))
 				return null;
 			return aid;
@@ -321,9 +335,14 @@ public class ServerCom
 
 
 	// Given an apartment ID and a task string, add it to the list
-	public static String addTask (String apt_id, String task) {
+	public static String addTask (String apt_id, String task, int workload, boolean oneTime) {
 	  HttpURLConnection connection = null;  
 	  task = "description=" + task;
+	  String repeating = "repeating=" + (oneTime ? 0 : 1);
+	  String weight = "weight=" + workload;
+
+	  String args = task + "&" + weight + "&" + repeating;
+	  System.out.println(args);
 
 	  try {
 	    //Create connection
@@ -335,7 +354,7 @@ public class ServerCom
 	        "application/x-www-form-urlencoded");
 
 	    connection.setRequestProperty("Content-Length", 
-	        Integer.toString(task.getBytes().length));
+	        Integer.toString(args.getBytes().length));
 	    connection.setRequestProperty("Content-Language", "en-US");  
 
 	    connection.setUseCaches(false);
@@ -344,7 +363,7 @@ public class ServerCom
 	    //Send request
 	    DataOutputStream wr = new DataOutputStream (
 	        connection.getOutputStream());
-	    wr.writeBytes(task);
+	    wr.writeBytes(args);
 	    wr.close();
 
 	    int responseCode = connection.getResponseCode();
