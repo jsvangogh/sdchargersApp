@@ -14,6 +14,7 @@ import android.widget.Toast;
 public class AddApartment extends AppCompatActivity {
     private String name = null;
     private String mUserID = null;
+    private String mUser = null;
     private String maptID = null;
     private Context mLoginThis;
     EditText editTextName;
@@ -27,7 +28,8 @@ public class AddApartment extends AppCompatActivity {
         mLoginThis = this;
         editTextName = (EditText)(findViewById(R.id.editText2));
         Intent intent = getIntent();
-        mUserID = intent.getStringExtra("com.example.joshua.livetogether.user");
+        mUserID = intent.getStringExtra("com.example.joshua.livetogether.userID");
+        mUser = intent.getStringExtra("com.example.joshua.livetogether.user");
     }
 
     public void onClick(View view) {
@@ -114,6 +116,7 @@ public class AddApartment extends AppCompatActivity {
                 if (maptID != null) {
                     Intent dashIntent = new Intent(mLoginThis, Dash.class);
                     dashIntent.putExtra("com.example.joshua.livetogether.aptID", maptID);
+                    dashIntent.putExtra("com.example.joshua.livetogether.user", mUser);
                     startActivity(dashIntent);
                     finish();
                 } else {
@@ -160,10 +163,11 @@ public class AddApartment extends AppCompatActivity {
                     Toast.makeText(AddApartment.this, "Apartment Created!", Toast.LENGTH_LONG).show();
                     JoinApartment joinApartment = new JoinApartment(maptName);
                     joinApartment.execute();
-                    Intent dashIntent = new Intent(mLoginThis, Dash.class);
-                    dashIntent.putExtra("com.example.joshua.livetogether.aptID", maptID);
-                    startActivity(dashIntent);
-                    finish();
+//                    Intent dashIntent = new Intent(mLoginThis, Dash.class);
+//                    dashIntent.putExtra("com.example.joshua.livetogether.aptID", maptID);
+//                    dashIntent.putExtra("com.example.joshua.livetogether.user", mUser);
+//                    startActivity(dashIntent);
+//                    finish();
                 } else {
                     Toast.makeText(AddApartment.this, "Apartment taken!", Toast.LENGTH_LONG).show();
                 }

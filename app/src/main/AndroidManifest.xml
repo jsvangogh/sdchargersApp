@@ -32,6 +32,8 @@
         </activity>
         <activity android:name=".AddApartment" >
         </activity>
+        <activity android:name=".RegisterUser" >
+        </activity>
     </application>
 
 </manifest>
