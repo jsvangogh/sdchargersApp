@@ -68,6 +68,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private String memail;
     private String mUserID;
     private String maptID;
     private String name = null;
@@ -199,10 +200,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             return;
         }
         else if(email.equals("")) {
-            mEmailView.setError(R.string.error_invalid_email);
+            mEmailView.setError(getString(R.string.error_invalid_email));
+            mEmailView.requestFocus();
         }
         else if(password.equals("")) {
-            mPasswordView.setError(R.string.error_invalid_password);
+            mPasswordView.setError(getString(R.string.error_invalid_password));
+            mPasswordView.requestFocus();
         }
         else {
             // Show a progress spinner, and kick off a background task to
@@ -215,9 +218,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     public void openRegister(View view)
     {
-        if (mRegTask != null) {
+        /*if (mRegTask != null) {
             return;
-        }
+        }*/
 
         // Reset errors.
         mEmailView.setError(null);
@@ -225,6 +228,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         // Store values at the time of the login attempt.
         String email = mEmailView.getText().toString();
+        memail = email;
         String password = mPasswordView.getText().toString();
 
         boolean cancel = false;
@@ -262,7 +266,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         Intent registerIntent = new Intent(mLoginThis, RegisterUser.class);
         //dashIntent.putExtra("com.example.joshua.livetogether.aptID", maptID);
-        //dashIntent.putExtra("com.example.joshua.livetogether.user", user);
+        registerIntent.putExtra("com.example.joshua.livetogether.user", memail);
         startActivity(registerIntent);
         finish();
     }

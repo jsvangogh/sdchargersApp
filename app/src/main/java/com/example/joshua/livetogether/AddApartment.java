@@ -14,7 +14,7 @@ import android.widget.Toast;
 public class AddApartment extends AppCompatActivity {
     private String name = null;
     private String mUserID = null;
-    private String mUser = null;
+    private String mEmail = null;
     private String maptID = null;
     private Context mLoginThis;
     EditText editTextName;
@@ -29,7 +29,7 @@ public class AddApartment extends AppCompatActivity {
         editTextName = (EditText)(findViewById(R.id.editText2));
         Intent intent = getIntent();
         mUserID = intent.getStringExtra("com.example.joshua.livetogether.userID");
-        mUser = intent.getStringExtra("com.example.joshua.livetogether.user");
+        mEmail = intent.getStringExtra("com.example.joshua.livetogether.user");
     }
 
     public void onClick(View view) {
@@ -116,7 +116,7 @@ public class AddApartment extends AppCompatActivity {
                 if (maptID != null) {
                     Intent dashIntent = new Intent(mLoginThis, Dash.class);
                     dashIntent.putExtra("com.example.joshua.livetogether.aptID", maptID);
-                    dashIntent.putExtra("com.example.joshua.livetogether.user", mUser);
+                    dashIntent.putExtra("com.example.joshua.livetogether.user", mEmail);
                     startActivity(dashIntent);
                     finish();
                 } else {
@@ -147,7 +147,10 @@ public class AddApartment extends AppCompatActivity {
             }
             else{
                 try {
+                    System.out.println(mUserID);
+                    System.out.println(maptName);
                     maptID = ServerCom.createApartment(mUserID, maptName);
+                    System.out.println(maptID);
                 } catch (Exception e) {
                     this.exception = e;
                 }

@@ -19,6 +19,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -60,11 +61,13 @@ public class RegisterUser extends AppCompatActivity {
     private EditText mPhoneView;
     private View mProgressView;
     private View mLoginFormView;
+    private String memail;
     private String mUserID;
     private String maptID;
     private String mPhoneNum;
     private String name = null;
     private User user;
+    //private String mUser;
     private Context mLoginThis;
 
     @Override
@@ -73,7 +76,7 @@ public class RegisterUser extends AppCompatActivity {
         setContentView(R.layout.activity_register_user);
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email1);
-        populateAutoComplete();
+        //populateAutoComplete();
 
         mPasswordView = (EditText) findViewById(R.id.password1);
         mPhoneView = (EditText) findViewById(R.id.number);
@@ -87,7 +90,8 @@ public class RegisterUser extends AppCompatActivity {
                 return false;
             }
         });*/
-
+        //Intent intent = getIntent();
+        //mUser = intent.getStringExtra("com.example.joshua.livetogether.user");
         /*Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,13 +111,13 @@ public class RegisterUser extends AppCompatActivity {
         mProgressView = findViewById(R.id.login_progress1);
     }
 
-    private void populateAutoComplete() {
+    /*private void populateAutoComplete() {
         if (!mayRequestContacts()) {
             return;
         }
 
         getLoaderManager().initLoader(0, null, this);
-    }
+    }*/
 
     private boolean mayRequestContacts() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
@@ -140,7 +144,7 @@ public class RegisterUser extends AppCompatActivity {
     /**
      * Callback received when a permissions request has been completed.
      */
-    @Override
+    /*@Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         if (requestCode == REQUEST_READ_CONTACTS) {
@@ -148,7 +152,7 @@ public class RegisterUser extends AppCompatActivity {
                 populateAutoComplete();
             }
         }
-    }
+    }*/
 
 
     /**
@@ -204,7 +208,7 @@ public class RegisterUser extends AppCompatActivity {
         }
     }*/
 
-    public void attemptRegister(View view)
+    public void attemptRegister()
     {
         if (mRegTask != null) {
             return;
@@ -305,7 +309,7 @@ public class RegisterUser extends AppCompatActivity {
         }
     }
 
-    @Override
+    /*@Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         return new CursorLoader(this,
                 // Retrieve data rows for the device user's 'profile' contact.
@@ -320,9 +324,9 @@ public class RegisterUser extends AppCompatActivity {
                 // Show primary email addresses first. Note that there won't be
                 // a primary email address if the user hasn't specified one.
                 ContactsContract.Contacts.Data.IS_PRIMARY + " DESC");
-    }
+    }*/
 
-    @Override
+    /*@Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         List<String> emails = new ArrayList<>();
         cursor.moveToFirst();
@@ -332,12 +336,12 @@ public class RegisterUser extends AppCompatActivity {
         }
 
         addEmailsToAutoComplete(emails);
-    }
+    }*/
 
-    @Override
+    /*@Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
 
-    }
+    }*/
 
     private interface ProfileQuery {
         String[] PROJECTION = {
@@ -353,7 +357,7 @@ public class RegisterUser extends AppCompatActivity {
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
         //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
         ArrayAdapter<String> adapter =
-                new ArrayAdapter<>(LoginActivity.this,
+                new ArrayAdapter<>(RegisterUser.this,
                         android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
 
         mEmailView.setAdapter(adapter);
@@ -375,13 +379,18 @@ public class RegisterUser extends AppCompatActivity {
                 //mApartmentRetriever = new ApartmentRetriever(name, mRegTask.mEmail);
                 //mApartmentRetriever.execute((Void) null);
                 Intent needApartment = new Intent(mLoginThis, AddApartment.class);
-                needApartment.putExtra("com.example.joshua.livetogether.user", user);
+                needApartment.putExtra("com.example.joshua.livetogether.userID", user.getUID());
+                needApartment.putExtra("com.example.joshua.livetogether.user", memail);
                 startActivity(needApartment);
                 finish();
             }
         });
 //        }
-        builder.show();
+        AlertDialog dialog = builder.show();
+        TextView messageView = (TextView) dialog.findViewById(android.R.id.message);
+        messageView.setGravity(Gravity.CENTER);
+        messageView.setTextSize(40);
+
         return name;
     }
     /**
@@ -451,7 +460,12 @@ public class RegisterUser extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(Void... params) {
             try {
+                System.out.println(mEmail);
+                System.out.println(mPassword);
+                System.out.println(mpNumber);
                 user = ServerCom.register(mEmail, mPassword, mpNumber);
+                memail = mEmail;
+                System.out.println(user);
             } catch (Exception e) {
                 return false;
             }
@@ -463,13 +477,18 @@ public class RegisterUser extends AppCompatActivity {
         protected void onPostExecute(final Boolean success) {
             //mAuthTask = null;
             showProgress(false);
-
-            if (user == null){
-                mEmailView.setError(getString(R.string.error_taken_email));
-                mEmailView.requestFocus();
+            try {
+                String userID = user.getUID();
+                if (userID == null) {
+                    mEmailView.setError(getString(R.string.error_taken_email));
+                    mEmailView.requestFocus();
+                } else {
+                    showInputDialog();
+                }
             }
-            else {
-                showInputDialog();
+            catch(NullPointerException e) {
+                mEmailView.setError(getString(R.string.error_field));
+                mEmailView.requestFocus();
             }
         }
 
