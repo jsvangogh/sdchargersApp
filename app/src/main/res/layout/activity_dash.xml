@@ -71,7 +71,8 @@
             android:id="@+id/listView"
             android:layout_weight=".5"
             android:divider="#FFFFFF"
-            android:dividerHeight="10sp"/>
+            android:dividerHeight="10sp"
+            android:layout_marginBottom="50dp" />
 
     </LinearLayout>
 

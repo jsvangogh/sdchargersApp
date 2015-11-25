@@ -4,6 +4,7 @@
     <!-- Strings related to login -->
     <string name="prompt_email">Username</string>
     <string name="prompt_password">Password</string>
+    <string name="prompt_number">Cell Phone #</string>
     <string name="action_sign_in">Sign in</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="error_invalid_email">This email address is invalid</string>
@@ -11,9 +12,11 @@
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
+    <string name="confirmation_code">6-digit confirmation code</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="error_field">Nullpointer Exception</string>
     <string name="no_apartment_title">No Apartment!</string>
     <string name="no_apartment_message">"No apartment associated with user! Please enter an apartment
         name to join an apartment"
