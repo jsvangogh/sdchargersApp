@@ -1,6 +1,7 @@
 package com.example.joshua.livetogether;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,6 +11,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 //import android.widget.Toolbar;
 import android.support.v7.widget.Toolbar;
+
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.ArrayList;
 
@@ -22,6 +27,11 @@ public class Dash extends AppCompatActivity {
     TaskAdapter mTaskAdapter; // adapter for listview
     String currentUser; // name of current user
     Boolean mMyTasks; // false = alltasks, true = myTasks
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +55,7 @@ public class Dash extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Task task = (Task) mTaskList.getItemAtPosition(position);
-                if(task.getAssignee().equals(currentUser)) {
+                if (task.getAssignee().equals(currentUser)) {
                     TaskRemover mTaskRemover = new TaskRemover(task, position);
                     mTaskRemover.execute();
                 }
@@ -53,12 +63,17 @@ public class Dash extends AppCompatActivity {
         });
         mTaskAdapter = new TaskAdapter(this, R.layout.list_item, tasks);
         mTaskList.setAdapter(mTaskAdapter);
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     // Update the task list on resume
     @Override
     protected void onResume() {
-        if (mTaskRetriever != null) {return;}
+        if (mTaskRetriever != null) {
+            return;
+        }
 
         super.onResume();
 
@@ -80,6 +95,46 @@ public class Dash extends AppCompatActivity {
     public void myTasks(View view) {
         mMyTasks = true;
         onResume();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Dash Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://com.example.joshua.livetogether/http/host/path")
+        );
+        AppIndex.AppIndexApi.start(client, viewAction);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Dash Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://com.example.joshua.livetogether/http/host/path")
+        );
+        AppIndex.AppIndexApi.end(client, viewAction);
+        client.disconnect();
     }
 
     class TaskRetriever extends AsyncTask<Void, Void, Void> {
@@ -104,20 +159,17 @@ public class Dash extends AppCompatActivity {
 
             TextView taskTitle = (TextView) findViewById(R.id.curTaskView);
 
-            if(!mMyTasks) {
+            if (!mMyTasks) {
                 taskTitle.setText(R.string.all_tasks);
-            }
-            else {
+            } else {
                 taskTitle.setText(R.string.my_tasks);
             }
 
             for (int i = 0; i < tempTasks.length; i++) {
-                if(mMyTasks && tempTasks[i].getAssignee().equals(currentUser)) {
+                if (mMyTasks && tempTasks[i].getAssignee().equals(currentUser)) {
                     mTaskAdapter.add(tempTasks[i]);
                     empty = false;
-                }
-                else if(mMyTasks == false)
-                {
+                } else if (mMyTasks == false) {
                     mTaskAdapter.add(tempTasks[i]);
                     empty = false;
                 }
@@ -136,8 +188,7 @@ public class Dash extends AppCompatActivity {
         int listPosition;
         Exception exception;
 
-        TaskRemover(Task task, int position)
-        {
+        TaskRemover(Task task, int position) {
             tempTask = task;
             listPosition = position;
         }
@@ -155,7 +206,8 @@ public class Dash extends AppCompatActivity {
         }
 
         protected void onPostExecute(Void v) {
-            mTaskAdapter.remove(tempTask);
+            mTaskRetriever = new TaskRetriever();
+            mTaskRetriever.execute((Void) null);
         }
     }
 }
