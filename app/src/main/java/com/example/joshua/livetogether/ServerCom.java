@@ -1,3 +1,11 @@
+/**
+ *	This is a controller, following the MVC design pattern
+ *
+ *	This file handles communications between the app and the server
+ *	It makes all the necessary HTTP requests to get or post data
+ *	to the server.
+ */
+
 package com.example.joshua.livetogether;
 
 import java.io.BufferedReader;
@@ -7,16 +15,69 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import org.json.*;
 
-
+/**
+ *	Controller class which handles server and app communications
+ */
 public class ServerCom
 {
 	// Define string constant
 	public static final String HOST = "http://sdchargers.herokuapp.com/";
 
 
-	// Allow user to sign in and get their User ID
+	/**
+	 * This method will take a connection, send args, and return the response
+	 */
+	public static StringBuffer executeRequest (HttpURLConnection connection, String args) throws Exception
+	{
+		try {
+			// Finish prepping request headers
+		    connection.setUseCaches(false);
+		    connection.setRequestProperty("Content-Language", "en-US");  
+			connection.setRequestProperty("Content-Type",
+				"application/x-www-form-urlencoded");
+
+			// Handle arguments if there are any
+			if (args != null)
+			{
+				// Prepare to send arguments
+			    connection.setRequestProperty("Content-Length", 
+			    	Integer.toString(args.getBytes().length));
+
+			    //Send request
+			    DataOutputStream wr = new DataOutputStream (
+			        connection.getOutputStream());
+			    wr.writeBytes(args);
+			    wr.close();
+			}
+
+		    // Get error or success code
+		    int responseCode = connection.getResponseCode();
+
+		    //Get Response text
+			BufferedReader in = new BufferedReader(
+			        new InputStreamReader(connection.getInputStream()));
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+
+			// Read full response into string buffer
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			in.close();
+
+			return response;
+		}
+		// Re-throw any errors to be caught in subsequent method
+		catch (Exception e) { throw e; }
+	}
+
+	/**
+	 * Allow user to sign in and get their User ID
+	 */
 	public static String signIn (String username, String password) {
 		HttpURLConnection connection = null;
+
+		// Define arguments
 		username = "username=" + username;
 		password = "password=" + password;
 
@@ -24,38 +85,13 @@ public class ServerCom
 
 		try {
 			//Create connection
-			URL url = new URL("http://sdchargers.herokuapp.com/login/");
+			URL url = new URL(HOST + "login/");
 			connection = (HttpURLConnection)url.openConnection();
 			connection.setRequestMethod("POST");
-
-			connection.setRequestProperty("Content-Type",
-					"application/x-www-form-urlencoded");
-
-	    	connection.setRequestProperty("Content-Length", 
-	        Integer.toString(args.getBytes().length));
-	    	connection.setRequestProperty("Content-Language", "en-US");  
-
-	    	connection.setUseCaches(false);
 	    	connection.setDoOutput(true);
 
-	    	//Send request
-	    	DataOutputStream wr = new DataOutputStream (
-	        connection.getOutputStream());
-	    	wr.writeBytes(args);
-	    	wr.close();
-
-			int responseCode = connection.getResponseCode();
-
-			//Get Response
-			BufferedReader in = new BufferedReader(
-					new InputStreamReader(connection.getInputStream()));
-			String inputLine;
-			StringBuffer response = new StringBuffer();
-
-			while ((inputLine = in.readLine()) != null) {
-				response.append(inputLine);
-			}
-			in.close();
+		    // Execute request with no args
+			StringBuffer response = executeRequest (connection, args);	
 
 			// ---------------------
 			// PROCESS JSON RESPONSE
@@ -68,6 +104,7 @@ public class ServerCom
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
+	    // Ensure that the connection closes
 		} finally {
 			if(connection != null) {
 				connection.disconnect();
@@ -76,7 +113,9 @@ public class ServerCom
 	}
 
 
-	// Register a new user
+	/**
+	 *  Register a new user
+	 */
 	public static User register (String username, String password, String phoneNum) {
 		HttpURLConnection connection = null;
 
@@ -84,12 +123,9 @@ public class ServerCom
 		username = "username=" + username;
 		password = "password=" + password;
 
+		// Clean up the phone number
 		if (phoneNum.length() < 10)
 			return null;
-		phoneNum = phoneNum.replace("(","");
-		phoneNum = phoneNum.replace(")","");
-		phoneNum = phoneNum.replace("-","");
-		phoneNum = phoneNum.replace(" ","");
 		phoneNum = "+1" + phoneNum.substring(phoneNum.length()-10);		
 		String phone = "phonenum=" + phoneNum;
 		
@@ -97,38 +133,13 @@ public class ServerCom
 
 		try {
 			//Create connection
-			URL url = new URL("http://sdchargers.herokuapp.com/register/");
+			URL url = new URL(HOST + "register/");
 			connection = (HttpURLConnection)url.openConnection();
 			connection.setRequestMethod("POST");
-
-			connection.setRequestProperty("Content-Type",
-					"application/x-www-form-urlencoded");
-
-	    	connection.setRequestProperty("Content-Length", 
-	        Integer.toString(args.getBytes().length));
-	    	connection.setRequestProperty("Content-Language", "en-US");  
-
-	    	connection.setUseCaches(false);
 	    	connection.setDoOutput(true);
 
-	    	//Send request
-	    	DataOutputStream wr = new DataOutputStream (
-	        connection.getOutputStream());
-	    	wr.writeBytes(args);
-	    	wr.close();
-
-			int responseCode = connection.getResponseCode();
-
-			//Get Response
-			BufferedReader in = new BufferedReader(
-					new InputStreamReader(connection.getInputStream()));
-			String inputLine;
-			StringBuffer response = new StringBuffer();
-
-			while ((inputLine = in.readLine()) != null) {
-				response.append(inputLine);
-			}
-			in.close();
+		    // Execute request with no args
+			StringBuffer response = executeRequest (connection, args);	
 
 			// ---------------------
 			// PROCESS JSON RESPONSE -- wrap
@@ -147,6 +158,7 @@ public class ServerCom
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
+	    // Ensure that the connection closes
 		} finally {
 			if(connection != null) {
 				connection.disconnect();
@@ -155,47 +167,26 @@ public class ServerCom
 	}
 
 
-	// Allow user to set apartment ID based on their User ID
+	/**
+	 * Allow user to set apartment ID based on their User ID 
+	 */
 	public static String setApartmentID (String userID, String aptName) {
 		HttpURLConnection connection = null;
+
+		// Define arguments
 		aptName = "aptName=" + aptName;
 
 		String args = aptName;
 
 		try {
 			//Create connection
-			URL url = new URL("http://sdchargers.herokuapp.com/join/" + userID);
+			URL url = new URL(HOST + "join/" + userID);
 			connection = (HttpURLConnection)url.openConnection();
 			connection.setRequestMethod("POST");
-
-			connection.setRequestProperty("Content-Type",
-					"application/x-www-form-urlencoded");
-
-	    	connection.setRequestProperty("Content-Length", 
-	        Integer.toString(aptName.getBytes().length));
-	    	connection.setRequestProperty("Content-Language", "en-US");  
-
-	    	connection.setUseCaches(false);
 	    	connection.setDoOutput(true);
 
-	    	//Send request
-	    	DataOutputStream wr = new DataOutputStream (
-	        connection.getOutputStream());
-	    	wr.writeBytes(args);
-	    	wr.close();
-
-			int responseCode = connection.getResponseCode();
-
-			//Get Response
-			BufferedReader in = new BufferedReader(
-					new InputStreamReader(connection.getInputStream()));
-			String inputLine;
-			StringBuffer response = new StringBuffer();
-
-			while ((inputLine = in.readLine()) != null) {
-				response.append(inputLine);
-			}
-			in.close();
+		    // Execute request with no args
+			StringBuffer response = executeRequest (connection, args);	
 
 			// ---------------------
 			// PROCESS JSON RESPONSE - return apartment ID
@@ -206,10 +197,10 @@ public class ServerCom
 				return null;
 			return aid;
 
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
+	    // Ensure that the connection closes
 		} finally {
 			if(connection != null) {
 				connection.disconnect();
@@ -218,49 +209,28 @@ public class ServerCom
 	}
 
 
-	// Allow user to CREATE a new apartment and join it based on their User ID
+	/**
+	 * Allow user to CREATE a new apartment and join it based on their User ID 
+	 */
 	public static String createApartment (String userID, String aptName) {
 		HttpURLConnection connection = null;
+
+		// Define arguments
 		aptName = "aptName=" + aptName;
 
 		String args = aptName;
 
 		try {
 			//Create connection
-			URL url = new URL("http://sdchargers.herokuapp.com/create/" + userID);
+			URL url = new URL(HOST + "create/" + userID);
 			connection = (HttpURLConnection)url.openConnection();
 			connection.setRequestMethod("POST");
-
-			connection.setRequestProperty("Content-Type",
-					"application/x-www-form-urlencoded");
-
-	    	connection.setRequestProperty("Content-Length", 
-	        Integer.toString(aptName.getBytes().length));
-	    	connection.setRequestProperty("Content-Language", "en-US");  
-
-	    	connection.setUseCaches(false);
 	    	connection.setDoOutput(true);
+		
+		    // Execute request with no args
+			StringBuffer response = executeRequest (connection, args);		
 
-	    	//Send request
-	    	DataOutputStream wr = new DataOutputStream (
-	        connection.getOutputStream());
-	    	wr.writeBytes(args);
-	    	wr.close();
-
-			int responseCode = connection.getResponseCode();
-
-			//Get Response
-			BufferedReader in = new BufferedReader(
-					new InputStreamReader(connection.getInputStream()));
-			String inputLine;
-			StringBuffer response = new StringBuffer();
-
-			while ((inputLine = in.readLine()) != null) {
-				response.append(inputLine);
-			}
-			in.close();
-
-			// ---------------------
+			// Check for error conditions
 			if (response.equals("Apartment name is already taken!"))
 				return null;
 
@@ -273,10 +243,10 @@ public class ServerCom
 				return null;
 			return aid;
 
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
+	    // Ensure that the connection closes
 		} finally {
 			if(connection != null) {
 				connection.disconnect();
@@ -285,35 +255,21 @@ public class ServerCom
 	}
 
 
-
-	// Given a user ID, return the associated apartment ID
+	/**
+	 * Given a user ID, return the associated apartment ID
+	 */
 	public static String getApartmentID (String userID) {
 		HttpURLConnection connection = null;
+
 		try {
 			//Create connection
-			URL url = new URL("http://sdchargers.herokuapp.com/users/"
+			URL url = new URL(HOST + "users/"
 				+ userID);
 			connection = (HttpURLConnection)url.openConnection();
 			connection.setRequestMethod("GET");
-
-			// Set header properties
-			connection.setRequestProperty("Content-Type",
-				"application/x-www-form-urlencoded");
-	    	connection.setRequestProperty("Content-Language", "en-US");  
-	    	connection.setUseCaches(false);
-
-	    	// Make the query and get response status
-			int responseCode = connection.getResponseCode();
-
-			//Get Response sa JSON in text format
-			BufferedReader in = new BufferedReader(
-					new InputStreamReader(connection.getInputStream()));
-			String inputLine;
-			StringBuffer response = new StringBuffer();
-			while ((inputLine = in.readLine()) != null) {
-				response.append(inputLine);
-			}
-			in.close();
+		
+		    // Execute request with no args
+			StringBuffer response = executeRequest (connection, null);		
 
 			// ---------------------
 			// PROCESS JSON RESPONSE
@@ -326,6 +282,7 @@ public class ServerCom
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
+	    // Ensure that the connection closes
 		} finally {
 			if(connection != null) {
 				connection.disconnect();
@@ -333,57 +290,35 @@ public class ServerCom
 		}
 	}
 
-
-	// Given an apartment ID and a task string, add it to the list
+	/**
+	 * Given an apartment ID and a task string, add it to the list
+	 */
 	public static String addTask (String apt_id, String task, int workload, boolean oneTime) {
 	  HttpURLConnection connection = null;  
+
+	  // Define arguments
 	  task = "description=" + task;
-	  String repeating = "repeating=" + (oneTime ? 0 : 1);
+	  String repeating = "repeating=" + (oneTime ? "False" : "True");
 	  String weight = "weight=" + workload;
 
 	  String args = task + "&" + weight + "&" + repeating;
-	  System.out.println(args);
 
 	  try {
 	    //Create connection
 	    URL url = new URL(HOST + "tasks/" + apt_id);
 	    connection = (HttpURLConnection)url.openConnection();
 	    connection.setRequestMethod("POST");
-		  connection.setDoOutput(true);
-	    connection.setRequestProperty("Content-Type", 
-	        "application/x-www-form-urlencoded");
+		connection.setDoOutput(true);
 
-	    connection.setRequestProperty("Content-Length", 
-	        Integer.toString(args.getBytes().length));
-	    connection.setRequestProperty("Content-Language", "en-US");  
-
-	    connection.setUseCaches(false);
-	    connection.setDoOutput(true);
-
-	    //Send request
-	    DataOutputStream wr = new DataOutputStream (
-	        connection.getOutputStream());
-	    wr.writeBytes(args);
-	    wr.close();
-
-	    int responseCode = connection.getResponseCode();
-
-	    //Get Response  
-		BufferedReader in = new BufferedReader(
-		        new InputStreamReader(connection.getInputStream()));
-		String inputLine;
-		StringBuffer response = new StringBuffer();
-
-		while ((inputLine = in.readLine()) != null) {
-			response.append(inputLine);
-		}
-		in.close();
+	    // Execute request with no args
+		StringBuffer response = executeRequest (connection, args);		    
+	    
  		return (response.toString());
-
 	    
 	  } catch (Exception e) {
 	    e.printStackTrace();
 	    return null;
+	    // Ensure that the connection closes
 	  } finally {
 	    if(connection != null) {
 	      connection.disconnect(); 
@@ -392,11 +327,15 @@ public class ServerCom
 	}
 
 
-	// REMOVE a task by apartment ID and, description, and assignee
+	/**
+	 * REMOVE a task by apartment ID and, description, and assignee
+	 */
 	public static String removeTask (String apt_id, String desc,
 		String assign)
 	{
 	  HttpURLConnection connection = null;  
+
+	  // Define arguments
 	  desc = "description=" + desc;
 	  assign = "assignee=" + assign;
 
@@ -407,39 +346,24 @@ public class ServerCom
 	    URL url = new URL(HOST + "tasks/" + apt_id);
 	    connection = (HttpURLConnection)url.openConnection();
 	    connection.setRequestMethod("DELETE");
-	    connection.setRequestProperty("Content-Type", 
-	        "application/x-www-form-urlencoded");
-
-	    connection.setUseCaches(false);
 	    connection.setDoOutput(true);
-	    connection.setRequestProperty("Content-Length", 
-	        Integer.toString(args.getBytes().length));
-	    connection.setRequestProperty("Content-Language", "en-US");  
 
-	    //Send request
-	    DataOutputStream wr = new DataOutputStream (
-	        connection.getOutputStream());
-	    wr.writeBytes(args);
-	    wr.close();
+	    // Execute request with no args
+		StringBuffer response = executeRequest (connection, args);	
 
-	    int responseCode = connection.getResponseCode();
-
-	    //Get Response  
-		BufferedReader in = new BufferedReader(
-		        new InputStreamReader(connection.getInputStream()));
-		String inputLine;
-		StringBuffer response = new StringBuffer();
-
-		while ((inputLine = in.readLine()) != null) {
-			response.append(inputLine);
+		// Re-add task if it is a repeating task
+		if (response != null)
+		{
+			int weight = Integer.parseInt(response.toString());
+			addTask(apt_id, desc, weight, false);
 		}
-		in.close();
- 		return (response.toString());
 
+ 		return (response.toString());
 	    
 	  } catch (Exception e) {
 	    e.printStackTrace();
 	    return null;
+	    // Ensure that the connection closes
 	  } finally {
 	    if(connection != null) {
 	      connection.disconnect(); 
@@ -448,31 +372,20 @@ public class ServerCom
 	}
 
 
-	// Gets an array of tasks with descriptions and assignees
+	/**
+	 * Gets an array of tasks with descriptions and assignees 
+	 */
 	public static Task[] getTasks (String apt_id) {
 	  HttpURLConnection connection = null;
+
 	  try {
 	    //Create connection
-	    URL url = new URL("http://sdchargers.herokuapp.com/tasks/" + apt_id);
+	    URL url = new URL(HOST + "tasks/" + apt_id);
 	    connection = (HttpURLConnection)url.openConnection();
 	    connection.setRequestMethod("GET");
 
-		connection.setRequestProperty("Content-Type",
-				  "application/x-www-form-urlencoded");
-
-
-	    int responseCode = connection.getResponseCode();
-
-	    //Get Response
-		BufferedReader in = new BufferedReader(
-		        new InputStreamReader(connection.getInputStream()));
-		String inputLine;
-		StringBuffer response = new StringBuffer();
-
-		while ((inputLine = in.readLine()) != null) {
-			response.append(inputLine);
-		}
-		in.close();
+	    // Execute request with no args
+		StringBuffer response = executeRequest (connection, null);	
 
 		// ---------------------
 		// PROCESS JSON RESPONSE
@@ -486,15 +399,15 @@ public class ServerCom
 			JSONObject cur = arr.getJSONObject(i);
 			descriptions[i] = cur.getString("description");
 			assignees[i] = cur.getString("assignee");
-			//********************* NEED THIS assignees[i] = assignees[i].substring(assignees[i].indexOf('@'));
 			toReturn[i] = new Task(assignees[i], descriptions[i]);
 		}
  		return toReturn;
 
-
+ 		// Handle null errors on return
 	  } catch (Exception e) {
 	    e.printStackTrace();
 	    return null;
+	    // Ensure that the connection closes
 	  } finally {
 	    if(connection != null) {
 	      connection.disconnect();
