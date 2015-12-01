@@ -359,7 +359,7 @@ public class ServerCom
 		{
 			try {
 				int weight = Integer.parseInt(response.toString());
-				addTask(apt_id, desc, weight, false);
+				addTask(apt_id, desc, weight, true);
 				return true;
 			}
 			catch (Exception e) {}
