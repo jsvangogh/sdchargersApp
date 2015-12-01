@@ -148,7 +148,6 @@ public class ServerCom
 				return null;
 
 			JSONObject respJson = new JSONObject(response.toString());
-			System.out.println(respJson);
 			String uid = respJson.getJSONObject("_id").getString("$oid");
 			int conf = respJson.getInt("confirm");
 			User returned = new User(uid, conf);
@@ -231,17 +230,21 @@ public class ServerCom
 			StringBuffer response = executeRequest (connection, args);		
 
 			// Check for error conditions
-			if (response.equals("Apartment name is already taken!"))
+			if (response.equals("\"Apartment name is already taken!\""))
 				return null;
 
 			// PROCESS JSON RESPONSE - return ID of new apt
-			System.out.println(response);
-			JSONObject respJson = new JSONObject(response.toString());
-			String aid = respJson.getJSONObject("_id").getString("$oid");
-			System.out.println(aid);
-			if (aid.equals(""))
+			try {
+				JSONObject respJson = new JSONObject(response.toString());
+				String aid = respJson.getJSONObject("_id").getString("$oid");
+				if (aid.equals(""))
+					return null;
+				return aid;
+			}
+			catch (Exception e)
+			{
 				return null;
-			return aid;
+			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -298,7 +301,7 @@ public class ServerCom
 
 	  // Define arguments
 	  task = "description=" + task;
-	  String repeating = "repeating=" + (oneTime ? "False" : "True");
+	  String repeating = "repeating=" + (oneTime ? 0 : 1);
 	  String weight = "weight=" + workload;
 
 	  String args = task + "&" + weight + "&" + repeating;
@@ -330,16 +333,16 @@ public class ServerCom
 	/**
 	 * REMOVE a task by apartment ID and, description, and assignee
 	 */
-	public static String removeTask (String apt_id, String desc,
+	public static boolean removeTask (String apt_id, String desc,
 		String assign)
 	{
 	  HttpURLConnection connection = null;  
 
 	  // Define arguments
-	  desc = "description=" + desc;
+	  String descrip = "description=" + desc;
 	  assign = "assignee=" + assign;
 
-	  String args = desc + "&" + assign;
+	  String args = descrip + "&" + assign;
 
 	  try {
 	    //Create connection
@@ -354,15 +357,19 @@ public class ServerCom
 		// Re-add task if it is a repeating task
 		if (response != null)
 		{
-			int weight = Integer.parseInt(response.toString());
-			addTask(apt_id, desc, weight, false);
+			try {
+				int weight = Integer.parseInt(response.toString());
+				addTask(apt_id, desc, weight, false);
+				return true;
+			}
+			catch (Exception e) {}
 		}
 
- 		return (response.toString());
+ 		return false;
 	    
 	  } catch (Exception e) {
 	    e.printStackTrace();
-	    return null;
+	    return false;
 	    // Ensure that the connection closes
 	  } finally {
 	    if(connection != null) {
