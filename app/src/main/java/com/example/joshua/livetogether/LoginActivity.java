@@ -176,11 +176,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         View focusView = null;
 
         // Check for a valid password, if the user entered one.
-        //if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-        //    mPasswordView.setError(getString(R.string.error_invalid_password));
-        //    focusView = mPasswordView;
-        //    cancel = true;
-        //}
+        if (!TextUtils.isEmpty(password)) {
+            mPasswordView.setError(getString(R.string.error_invalid_password));
+            focusView = mPasswordView;
+            cancel = true;
+        }
 
         // Check for a valid email address.
         //if (TextUtils.isEmpty(email)) {
@@ -218,10 +218,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     public void openRegister(View view)
     {
-        /*if (mRegTask != null) {
-            return;
-        }*/
-
         // Reset errors.
         mEmailView.setError(null);
         mPasswordView.setError(null);
@@ -230,39 +226,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         String email = mEmailView.getText().toString();
         memail = email;
         String password = mPasswordView.getText().toString();
-
-        boolean cancel = false;
-        View focusView = null;
-
-        // Check for a valid password, if the user entered one.
-        //if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-        //    mPasswordView.setError(getString(R.string.error_invalid_password));
-        //    focusView = mPasswordView;
-        //    cancel = true;
-        //}
-
-        // Check for a valid email address.
-        //if (TextUtils.isEmpty(email)) {
-        //    mEmailView.setError(getString(R.string.error_field_required));
-        //    focusView = mEmailView;
-        //    cancel = true;
-        //} else if (!isEmailValid(email)) {
-        //    mEmailView.setError(getString(R.string.error_invalid_email));
-        //    focusView = mEmailView;
-        //    cancel = true;
-        //}
-
-        /*if (cancel) {
-            // There was an error; don't attempt login and focus the first
-            // form field with an error.
-            focusView.requestFocus();
-        } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
-            showProgress(true);
-            mRegTask = new UserRegisterTask(email, password);
-            mRegTask.execute((Void) null);
-        }*/
 
         Intent registerIntent = new Intent(mLoginThis, RegisterUser.class);
         //dashIntent.putExtra("com.example.joshua.livetogether.aptID", maptID);
@@ -441,48 +404,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
         }
     }
-
-    /*public class UserRegisterTask extends AsyncTask<Void, Void, Boolean> {
-
-        private final String mEmail;
-        private final String mPassword;
-
-        UserRegisterTask(String email, String password) {
-            mEmail = email;
-            mPassword = password;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            try {
-                user = ServerCom.register(mEmail, mPassword, "1234567890");
-            } catch (Exception e) {
-                return false;
-            }
-
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            mAuthTask = null;
-            showProgress(false);
-
-            if (user == null){
-                mEmailView.setError(getString(R.string.error_taken_email));
-                mEmailView.requestFocus();
-            }
-            else {
-                attemptLogin();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            mAuthTask = null;
-            showProgress(false);
-        }
-    }*/
 
     class ApartmentRetriever extends AsyncTask<Void, Void, Void> {
         private String maptName = null;
