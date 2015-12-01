@@ -37,8 +37,8 @@ public class AddTask extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_task);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        //setSupportActionBar(toolbar);
         mLoginThis = this;
         Intent intent = getIntent();
         mAptID = intent.getStringExtra("com.example.joshua.livetogether.aptID");
@@ -50,23 +50,23 @@ public class AddTask extends AppCompatActivity {
 
     public void setEasy(View v) {
         weight=10;
-        easyButton.setBackgroundColor(Color.parseColor("#CCCCCC"));
-        mediumButton.setBackgroundColor(Color.parseColor("#EEEEEE"));
-        hardButton.setBackgroundColor(Color.parseColor("#EEEEEE"));
+        easyButton.setTextColor(Color.parseColor("#b58900"));
+        mediumButton.setTextColor(Color.parseColor("#111111"));
+        hardButton.setTextColor(Color.parseColor("#111111"));
     }
 
     public void setMedium(View v) {
         weight=20;
-        easyButton.setBackgroundColor(Color.parseColor("#EEEEEE"));
-        mediumButton.setBackgroundColor(Color.parseColor("#CCCCCC"));
-        hardButton.setBackgroundColor(Color.parseColor("#EEEEEE"));
+        easyButton.setTextColor(Color.parseColor("#b58900"));
+        mediumButton.setTextColor(Color.parseColor("#b58900"));
+        hardButton.setTextColor(Color.parseColor("#111111"));
     }
 
     public void setHard(View v) {
         weight=30;
-        easyButton.setBackgroundColor(Color.parseColor("#EEEEEE"));
-        mediumButton.setBackgroundColor(Color.parseColor("#EEEEEE"));
-        hardButton.setBackgroundColor(Color.parseColor("#CCCCCC"));
+        easyButton.setTextColor(Color.parseColor("#b58900"));
+        mediumButton.setTextColor(Color.parseColor("#b58900"));
+        hardButton.setTextColor(Color.parseColor("#b58900"));
     }
 
     public void submitForm(View view) {

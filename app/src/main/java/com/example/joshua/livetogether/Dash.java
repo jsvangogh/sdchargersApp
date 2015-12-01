@@ -109,14 +109,6 @@ public class Dash extends AppCompatActivity {
             mTaskAdapter.clear();
             boolean empty = true;
 
-            TextView taskTitle = (TextView) findViewById(R.id.curTaskView);
-
-            if (!mMyTasks) {
-                taskTitle.setText(R.string.all_tasks);
-            } else {
-                taskTitle.setText(R.string.my_tasks);
-            }
-
             for (int i = 0; i < tempTasks.length; i++) {
                 if (mMyTasks && tempTasks[i].getAssignee().equals(currentUser)) {
                     mTaskAdapter.add(tempTasks[i]);
