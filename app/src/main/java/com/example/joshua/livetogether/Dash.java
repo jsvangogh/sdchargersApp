@@ -1,15 +1,12 @@
 package com.example.joshua.livetogether;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
-//import android.widget.Toolbar;
 import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
@@ -17,17 +14,13 @@ import java.util.ArrayList;
 
 public class Dash extends AppCompatActivity {
 
-    private String maptID;
-    private TaskRetriever mTaskRetriever;
-    ArrayList<Task> tasks = new ArrayList<>();
-    ListView mTaskList;
+    private String mAptID; // apartment ID
+    private TaskRetriever mTaskRetriever; // retrieve tasks
+    ArrayList<Task> tasks = new ArrayList<>(); // hold tasks
+    ListView mTaskList; // Holds tasks
     TaskAdapter mTaskAdapter; // adapter for listview
     String currentUser; // name of current user
     Boolean mMyTasks; // false = alltasks, true = myTasks
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,9 +33,10 @@ public class Dash extends AppCompatActivity {
 
         // get the apartment ID from the login page
         Intent intent = getIntent();
-        maptID = intent.getStringExtra("com.example.joshua.livetogether.aptID");
+        mAptID = intent.getStringExtra("com.example.joshua.livetogether.aptID");
         currentUser = intent.getStringExtra("com.example.joshua.livetogether.user");
 
+        // start by showing all tasks
         mMyTasks = false;
 
         // set up listview and its adapter
@@ -52,53 +46,69 @@ public class Dash extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Task task = (Task) mTaskList.getItemAtPosition(position);
                 if (task.getAssignee().equals(currentUser)) {
-                    TaskRemover mTaskRemover = new TaskRemover(task, position);
+                    TaskRemover mTaskRemover = new TaskRemover(task);
                     mTaskRemover.execute();
                 }
             }
         });
+
+        // set adapter for the task list
         mTaskAdapter = new TaskAdapter(this, R.layout.list_item, tasks);
         mTaskList.setAdapter(mTaskAdapter);
     }
 
-    // Update the task list on resume
+    /**
+     * Update the task list on resume
+     */
     @Override
     protected void onResume() {
+        super.onResume();
+
+        // Don't retrieve tasks if it's still running
         if (mTaskRetriever != null) {
             return;
         }
 
-        super.onResume();
-
+        // get tasks
         mTaskRetriever = new TaskRetriever();
         mTaskRetriever.execute((Void) null);
     }
 
+    /**
+     * Move to add task page
+     */
     public void add(View view) {
         Intent addIntent = new Intent(this, AddTask.class);
-        addIntent.putExtra("com.example.joshua.livetogether.aptID", maptID);
+        addIntent.putExtra("com.example.joshua.livetogether.aptID", mAptID);
         startActivity(addIntent);
     }
 
+    /**
+     * Show all tasks
+     */
     public void allTasks(View view) {
         mMyTasks = false;
         onResume();
     }
 
+    /**
+     * Show only my tasks
+     */
     public void myTasks(View view) {
         mMyTasks = true;
         onResume();
     }
 
     class TaskRetriever extends AsyncTask<Void, Void, Void> {
-        Task tempTasks[];
+        Task tempTasks[]; // holds tasks
         Exception exception;
 
         @Override
         protected Void doInBackground(Void... v) {
 
+            // get tasks
             try {
-                tempTasks = ServerCom.getTasks(maptID);
+                tempTasks = ServerCom.getTasks(mAptID);
             } catch (Exception e) {
                 this.exception = e;
             }
@@ -108,18 +118,18 @@ public class Dash extends AppCompatActivity {
 
         protected void onPostExecute(Void v) {
             mTaskAdapter.clear();
-            boolean empty = true;
+            boolean empty = tempTasks.length == 0;
 
+            // fill task lists
             for (int i = 0; i < tempTasks.length; i++) {
                 if (mMyTasks && tempTasks[i].getAssignee().equals(currentUser)) {
                     mTaskAdapter.add(tempTasks[i]);
-                    empty = false;
                 } else if (mMyTasks == false) {
                     mTaskAdapter.add(tempTasks[i]);
-                    empty = false;
                 }
             }
 
+            // apartment has no tasks
             if (empty) {
                 mTaskAdapter.add(new Task("", "No Tasks"));
             }
@@ -129,21 +139,20 @@ public class Dash extends AppCompatActivity {
     }
 
     class TaskRemover extends AsyncTask<Void, Void, Void> {
-        Task tempTask;
-        int listPosition;
+        Task tempTask; // task to remove
         Exception exception;
-        boolean remove = false;
+        boolean repeating = false; // re-add task
 
-        TaskRemover(Task task, int position) {
+        TaskRemover(Task task) {
             tempTask = task;
-            listPosition = position;
         }
 
         @Override
         protected Void doInBackground(Void... v) {
 
+            // tell server to remove task
             try {
-                remove = ServerCom.removeTask(maptID, tempTask.getDescription(), tempTask.getAssignee());
+                repeating = ServerCom.removeTask(mAptID, tempTask.getDescription(), tempTask.getAssignee());
             } catch (Exception e) {
                 this.exception = e;
             }
@@ -152,9 +161,12 @@ public class Dash extends AppCompatActivity {
         }
 
         protected void onPostExecute(Void v) {
-            if(remove) {
+            // let user know if task was readded
+            if(repeating) {
                 Toast.makeText(Dash.this, "Task will be re-added!", Toast.LENGTH_LONG).show();
             }
+
+            // reload task list
             mTaskRetriever = new TaskRetriever();
             mTaskRetriever.execute((Void) null);
         }
