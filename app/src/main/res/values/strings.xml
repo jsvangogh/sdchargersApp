@@ -32,7 +32,7 @@
     <string name="all_tasks">All Tasks</string>
     <string name="my_tasks">My Tasks</string>
     <string name="title_activity_dash">Dash</string>
-    <string name="add_apartment_dialogue">Enter name of apartment you would like to join or create</string>
+    <string name="add_apartment_dialogue">Create or Join Apartment</string>
     <string name="add_task">Add Task</string>
     <string name="add_task_dialogue_name">Insert the name of the task you would like to add</string>
     <string name="add_task_frequency_dialogue">Is this a one time task?</string>
