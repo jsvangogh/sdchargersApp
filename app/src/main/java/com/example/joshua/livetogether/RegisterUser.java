@@ -248,7 +248,25 @@ public class RegisterUser extends AppCompatActivity {
             // There was an error; don't attempt login and focus the first
             // form field with an error.
             focusView.requestFocus();
-        } else {
+
+        }
+        else if(email.equals("")){
+            mEmailView.setError(getString(R.string.error_field_required));
+            mEmailView.requestFocus();
+        }
+        else if(password.equals("")){
+            mPasswordView.setError(getString(R.string.error_field_required));
+            mPasswordView.requestFocus();
+        }
+        else if(phoneNumber.equals("")){
+            mPhoneView.setError(getString(R.string.error_field_required));
+            mPhoneView.requestFocus();
+        }
+        else if(phoneNumber.length() != 10) {
+            mPhoneView.setError(getString(R.string.phone_number_short));
+            mPhoneView.requestFocus();
+        }
+        else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
@@ -365,6 +383,13 @@ public class RegisterUser extends AppCompatActivity {
 
     private String showInputDialog() {
         //final EditText input = new EditText(this);
+        if(user.getConfirm() == 0){
+            Intent needApartment = new Intent(mLoginThis, AddApartment.class);
+            needApartment.putExtra("com.example.joshua.livetogether.userID", user.getUID());
+            needApartment.putExtra("com.example.joshua.livetogether.user", memail);
+            startActivity(needApartment);
+            finish();
+        }
         String confirmationCode = "" + user.getConfirm();
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.confirmation_code);
@@ -464,6 +489,9 @@ public class RegisterUser extends AppCompatActivity {
                 System.out.println(mPassword);
                 System.out.println(mpNumber);
                 user = ServerCom.register(mEmail, mPassword, mpNumber);
+                /*if(user == null) {
+
+                }*/
                 memail = mEmail;
                 System.out.println(user);
             } catch (Exception e) {
@@ -487,8 +515,10 @@ public class RegisterUser extends AppCompatActivity {
                 }
             }
             catch(NullPointerException e) {
-                mEmailView.setError(getString(R.string.error_field));
+                mEmailView.setError(getString(R.string.error_taken_email));
                 mEmailView.requestFocus();
+                mRegTask = null;
+                //finish();
             }
         }
 

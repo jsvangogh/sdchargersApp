@@ -11,6 +11,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 //import android.widget.Toolbar;
 import android.support.v7.widget.Toolbar;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -131,6 +132,7 @@ public class Dash extends AppCompatActivity {
         Task tempTask;
         int listPosition;
         Exception exception;
+        boolean remove = false;
 
         TaskRemover(Task task, int position) {
             tempTask = task;
@@ -141,7 +143,7 @@ public class Dash extends AppCompatActivity {
         protected Void doInBackground(Void... v) {
 
             try {
-                ServerCom.removeTask(maptID, tempTask.getDescription(), tempTask.getAssignee());
+                remove = ServerCom.removeTask(maptID, tempTask.getDescription(), tempTask.getAssignee());
             } catch (Exception e) {
                 this.exception = e;
             }
@@ -150,6 +152,9 @@ public class Dash extends AppCompatActivity {
         }
 
         protected void onPostExecute(Void v) {
+            if(remove) {
+                Toast.makeText(Dash.this, "Task will be re-added!", Toast.LENGTH_LONG).show();
+            }
             mTaskRetriever = new TaskRetriever();
             mTaskRetriever.execute((Void) null);
         }
