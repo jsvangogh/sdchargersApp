@@ -13,7 +13,6 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -33,10 +32,14 @@ public class LoginActivity extends AppCompatActivity{
     // UI references.
     private EditText mUserNameView; // username box
     private EditText mPasswordView; // password box
+
+    // global strings
     private String mUserName; // user entered username
     private String mPassword; // user entered password
     private String mUserID; // User ID from server
     private String mAptID; // Apartment ID from server
+
+    // used to obtain context inside wrapped classes
     private Context mLoginThis; // this
 
     @Override
@@ -45,10 +48,22 @@ public class LoginActivity extends AppCompatActivity{
         setContentView(R.layout.activity_login);
 
         // Set up the login form.
-        mUserNameView = (AutoCompleteTextView) findViewById(R.id.email);
+        mUserNameView = (EditText) findViewById(R.id.email);
+        mPasswordView = (EditText) findViewById(R.id.password);
+
+        // Get username and password from register page if available
+        Intent intent = getIntent();
+        mUserName = intent.getStringExtra("com.example.joshua.livetogether.user");
+        mPassword = intent.getStringExtra("com.example.joshua.livetogether.password");
+        if(mUserName != null) {
+            mUserNameView.setText(mUserName);
+        }
+        if(mPassword != null) {
+            mPasswordView.setText(mPassword);
+        }
 
         // set sign in button on for password box
-        mPasswordView = (EditText) findViewById(R.id.password);
+
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -118,7 +133,6 @@ public class LoginActivity extends AppCompatActivity{
         }
         // attempt to login
         else {
-            // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             mAuthTask = new UserLoginTask();
             mAuthTask.execute((Void) null);
@@ -130,10 +144,6 @@ public class LoginActivity extends AppCompatActivity{
      */
     public void openRegister(View view)
     {
-        // Reset errors.
-        mUserNameView.setError(null);
-        mPasswordView.setError(null);
-
         // Store values at the time of the login attempt.
         mUserName = mUserNameView.getText().toString();
         mPassword = mPasswordView.getText().toString();
@@ -150,34 +160,24 @@ public class LoginActivity extends AppCompatActivity{
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+    public class UserLoginTask extends AsyncTask<Void, Void, Void> {
 
         @Override
-        protected Boolean doInBackground(Void... params) {
+        protected Void doInBackground(Void... params) {
 
             // attempt to log in
-            try {
-                 mUserID = ServerCom.signIn(mUserName, mPassword);
-            } catch (Exception e) {
-                return false;
-            }
+            mUserID = ServerCom.signIn(mUserName, mPassword);
 
-            // login fail
-            if (mUserID == null) {
-                return false;
-            }
-
-            // login success
-            return true;
+            return null;
         }
 
         @Override
-        protected void onPostExecute(final Boolean success) {
+        protected void onPostExecute(Void v) {
             // login task finished
             mAuthTask = null;
 
             // alert user of failure
-            if (!success) {
+            if(mUserID == null) {
                 mPasswordView.setError(getString(R.string.error_unsuccessful_login));
                 mUserNameView.setError(getString(R.string.error_unsuccessful_login));
                 mPasswordView.requestFocus();

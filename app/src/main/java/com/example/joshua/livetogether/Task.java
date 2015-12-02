@@ -6,8 +6,8 @@ package com.example.joshua.livetogether;
  */
  public class Task
  {
- 	private String assignee;
- 	private String description;
+ 	private String assignee; // name of person assigned to task
+ 	private String description; // task description
 
  	public Task (String assign, String describe)
  	{

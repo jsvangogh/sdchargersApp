@@ -7,17 +7,29 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+/**
+ * get or create an apartment for the user
+ */
 public class AddApartment extends AppCompatActivity {
-    private String name = null;
+
+    // UI references
+    EditText apartmentNameView;
+
+    // global variables
+    private String mApartmentName = null;
     private String mUserID = null;
-    private String mEmail = null;
+    private String mUserName = null;
     private String maptID = null;
+
+    // context for creating a new activity from async task classes
     private Context mLoginThis;
-    EditText editTextName;
+
+    // async task references
     JoinApartment mJoinApartment;
     CreateApartment mCreateApartment;
 
@@ -25,152 +37,150 @@ public class AddApartment extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_apartment);
-        mLoginThis = this;
-        editTextName = (EditText)(findViewById(R.id.editText2));
+
+        // get apartment name text field
+        apartmentNameView = (EditText)(findViewById(R.id.editText2));
         Intent intent = getIntent();
+
+        // get user ID and Name from calling page
         mUserID = intent.getStringExtra("com.example.joshua.livetogether.userID");
-        mEmail = intent.getStringExtra("com.example.joshua.livetogether.user");
+        mUserName = intent.getStringExtra("com.example.joshua.livetogether.user");
+
+        // get context
+        mLoginThis = this;
     }
 
+    /**
+     * attempt to create or join an apartment
+     */
     public void onClick(View view) {
-        name = editTextName.getText().toString();
+
+        // only allow one task to be active
+        if(mJoinApartment != null || mCreateApartment != null) {
+            return;
+        }
+
+        // get apartment ApartmentName
+        mApartmentName = apartmentNameView.getText().toString();
+
+        // Check for a valid apartment name.
+        if (TextUtils.isEmpty(mApartmentName)) {
+            apartmentNameView.setError(getString(R.string.error_field_required));
+
+            // put focus to apartment view
+            apartmentNameView.requestFocus();
+            return;
+        }
+
+        // check if user is creating or joining an apartment
         switch(view.getId()) {
             case R.id.createApt:
-                mCreateApartment = new CreateApartment(name);
+                // create and execute task to create apartment
+                mCreateApartment = new CreateApartment(mApartmentName);
                 mCreateApartment.execute((Void) null);
                 break;
             case R.id.joinApt:
-                mJoinApartment = new JoinApartment(name);
+                // create and execute task to join apartment
+                mJoinApartment = new JoinApartment(mApartmentName);
                 mJoinApartment.execute((Void) null);
                 break;
         }
     }
 
+    /**
+     * alert user that their selection does not exist
+     */
     private String showInputDialog() {
+        // build dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.no_apartment_title);
         builder.setMessage(R.string.no_apartment_found);
 
-//        while(name == null) {
+        // set button
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Toast.makeText(AddApartment.this, "Try again or create a new apartment", Toast.LENGTH_LONG).show();
             }
         });
-//        }
+
+        // show dialog
         builder.show();
-        return name;
+        return mApartmentName;
     }
 
-    private String showInputDialog2() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.apartment_created_title);
-        builder.setMessage(R.string.apartment_verification);
-
-//        while(name == null) {
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                finish();
-            }
-        });
-//        }
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                finish();
-            }
-        });
-        builder.show();
-        return name;
-    }
-
-    class JoinApartment extends AsyncTask<Void, Void, Boolean> {
-        private String maptName = null;
-        Exception exception;
+    /**
+     * async task to join an apartment
+     */
+    class JoinApartment extends AsyncTask<Void, Void, Void> {
+        private String mAptName = null;
 
         JoinApartment(String aptName) {
-            maptName = aptName;
+            mAptName = aptName;
         }
 
         @Override
-        protected Boolean doInBackground(Void... v) {
+        protected Void doInBackground(Void... v) {
 
-            if(maptName.equals("")) {
-                return false;
-            }
-            else{
-                try {
-                    maptID = ServerCom.setApartmentID(mUserID, maptName);
-                } catch (Exception e) {
-                    this.exception = e;
-                }
-            }
+            // get apartment ID
+            maptID = ServerCom.setApartmentID(mUserID, mAptName);
 
-            return true;
+            return null;
         }
 
-        protected void onPostExecute(Boolean input) {
-            if (input) {
-                if (maptID != null) {
-                    Intent dashIntent = new Intent(mLoginThis, Dash.class);
-                    dashIntent.putExtra("com.example.joshua.livetogether.aptID", maptID);
-                    dashIntent.putExtra("com.example.joshua.livetogether.user", mEmail);
-                    startActivity(dashIntent);
-                    finish();
-                } else {
-                    showInputDialog();
-                }
+        protected void onPostExecute(Void v) {
+
+            // if apartment exists move to dash
+            if (maptID != null) {
+                Intent dashIntent = new Intent(mLoginThis, Dash.class);
+                dashIntent.putExtra("com.example.joshua.livetogether.aptID", maptID);
+                dashIntent.putExtra("com.example.joshua.livetogether.user", mUserName);
+                startActivity(dashIntent);
+                finish();
             }
-            else
-            {
-                editTextName.setError(getString(R.string.error_field_required));
-                editTextName.requestFocus();
+            // alert user that apartment does not exist
+            else {
+                showInputDialog();
             }
+
+            mJoinApartment = null;
         }
     }
 
-    class CreateApartment extends AsyncTask<Void, Void, Boolean> {
+    /**
+     * async task to create an apartment
+     */
+    class CreateApartment extends AsyncTask<Void, Void, Void> {
         private String maptName = null;
-        Exception exception;
 
         CreateApartment(String aptName) {
             maptName = aptName;
         }
 
         @Override
-        protected Boolean doInBackground(Void... v) {
+        protected Void doInBackground(Void... v) {
 
-            if(maptName.equals("")) {
-                return false;
-            }
-            else{
-                try {
-                    maptID = ServerCom.createApartment(mUserID, maptName);
-                } catch (Exception e) {
-                    this.exception = e;
-                }
-            }
+            // create apartment
+            maptID = ServerCom.createApartment(mUserID, maptName);
 
-            return true;
+            return null;
         }
 
         @Override
-        protected void onPostExecute(Boolean input) {
-            if(input) {
-                if (maptID != null) {
-                    Toast.makeText(AddApartment.this, "Apartment Created!", Toast.LENGTH_LONG).show();
-                    JoinApartment joinApartment = new JoinApartment(maptName);
-                    joinApartment.execute();
-                } else {
-                    Toast.makeText(AddApartment.this, "Apartment taken!", Toast.LENGTH_LONG).show();
-                }
+        protected void onPostExecute(Void v) {
+
+            // if apartment was created, head to dash
+            if (maptID != null) {
+                Toast.makeText(AddApartment.this, "Apartment Created!", Toast.LENGTH_LONG).show();
+                JoinApartment joinApartment = new JoinApartment(maptName);
+                joinApartment.execute();
             }
+            // alert user that apartment is taken
             else {
-                editTextName.setError(getString(R.string.error_field_required));
-                editTextName.requestFocus();
+                Toast.makeText(AddApartment.this, "Apartment taken!", Toast.LENGTH_LONG).show();
             }
+
+            mCreateApartment = null;
         }
     }
 }

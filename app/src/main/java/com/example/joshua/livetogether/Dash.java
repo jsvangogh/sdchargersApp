@@ -12,6 +12,9 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+/**
+ * Activity for displaying and interacting with existing tasks
+ */
 public class Dash extends AppCompatActivity {
 
     private String mAptID; // apartment ID
@@ -99,6 +102,9 @@ public class Dash extends AppCompatActivity {
         onResume();
     }
 
+    /**
+     * Retrieve tasks from server and appropriately fill listview
+     */
     class TaskRetriever extends AsyncTask<Void, Void, Void> {
         Task tempTasks[]; // holds tasks
         Exception exception;
@@ -138,6 +144,9 @@ public class Dash extends AppCompatActivity {
         }
     }
 
+    /**
+     * Used to complete tasks, tasks may be readded if they are repeating
+     */
     class TaskRemover extends AsyncTask<Void, Void, Void> {
         Task tempTask; // task to remove
         Exception exception;

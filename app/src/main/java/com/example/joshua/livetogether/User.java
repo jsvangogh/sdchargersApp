@@ -6,8 +6,8 @@ package com.example.joshua.livetogether;
  */
  public class User
  {
- 	private String uid;
- 	private int confirmation;
+ 	private String uid; // User ID
+ 	private int confirmation; // Confirmation number for twilio
 
  	public User (String idNum, int twilioConfirm)
  	{

@@ -25,8 +25,8 @@
                 android:transitionGroup="false">
 
 
-            <AutoCompleteTextView android:id="@+id/email1" android:layout_width="match_parent"
-                    android:layout_height="wrap_content" android:hint="@string/prompt_email"
+            <AutoCompleteTextView android:id="@+id/username_register" android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:hint="@string/prompt_username"
                     android:inputType="textEmailAddress" android:maxLines="1"
                     android:singleLine="true"
                 android:textColor="@color/cyan" />
@@ -38,7 +38,7 @@
                 android:textColorHint="@color/base0">
 
 
-                <EditText android:id="@+id/password1" android:layout_width="match_parent"
+                <EditText android:id="@+id/password_register" android:layout_width="match_parent"
                     android:layout_height="wrap_content" android:hint="@string/prompt_password"
                     android:imeActionId="@+id/login"
                     android:imeActionLabel="@string/action_sign_in_short"
@@ -56,7 +56,7 @@
             <EditText android:id="@+id/number" android:layout_width="match_parent"
                     android:layout_height="wrap_content" android:hint="@string/prompt_number"
                     android:inputType="number"
-                    android:imeActionId="@+id/password1"
+                    android:imeActionId="@+id/password_register"
                     android:imeActionLabel="@string/action_sign_in_short"
                     android:imeOptions="actionUnspecified"
                     android:maxLines="1"
