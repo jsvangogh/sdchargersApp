@@ -22,22 +22,10 @@
             android:id="@+id/show_tasks"
             android:textSize="20sp"
             android:textColor="@color/violet"
-            android:onClick="allTasks"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:text="All Tasks"
-            android:background="@color/red" />
-        <Button
-            android:layout_width="110dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/review_tasks"
-            android:textSize="20sp"
-            android:textColor="#FFFFFF"
-            android:onClick="allTasks"
-            android:text="Review"
-            android:layout_margin="5dp"
-            android:layout_centerInParent="true"
-            android:background="@color/base03"/>
+            android:background="@color/base03" />
 
         <Button
             android:layout_width="100dp"
@@ -46,7 +34,6 @@
             android:id="@+id/my_tasks"
             android:textSize="20sp"
             android:textColor="@color/violet"
-            android:onClick="myTasks"
             android:text="My    Tasks"
             android:background="@color/base03"
             android:layout_alignParentEnd="true"

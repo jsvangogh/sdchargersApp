@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
@@ -55,6 +56,20 @@ public class Dash extends AppCompatActivity {
             }
         });
 
+        findViewById(R.id.my_tasks).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                myTasks();
+            }
+        });
+
+        findViewById(R.id.show_tasks).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                allTasks();
+            }
+        });
+
         // set adapter for the task list
         mTaskAdapter = new TaskAdapter(this, R.layout.list_item, tasks);
         mTaskList.setAdapter(mTaskAdapter);
@@ -89,7 +104,7 @@ public class Dash extends AppCompatActivity {
     /**
      * Show all tasks
      */
-    public void allTasks(View view) {
+    public void allTasks() {
         mMyTasks = false;
         onResume();
     }
@@ -97,7 +112,7 @@ public class Dash extends AppCompatActivity {
     /**
      * Show only my tasks
      */
-    public void myTasks(View view) {
+    public void myTasks() {
         mMyTasks = true;
         onResume();
     }
