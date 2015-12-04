@@ -30,7 +30,6 @@ public class DashTest {
 
     @Test
     public void testAdd() {
-
         // click add button
         onView(withId(R.id.addButton)).perform(click());
 
