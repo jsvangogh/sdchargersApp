@@ -20,12 +20,14 @@ import static org.hamcrest.Matchers.allOf;
 @RunWith(AndroidJUnit4.class)
 public class DashTest {
 
+    // test apartment ID
     final String apartmentID = "5661e5f9ea616c000a66163b";
 
     // runs before tests
     @Rule
     public final ActivityRule<Dash> login = new ActivityRule<>(Dash.class);
 
+    // try and add necessary data before running tests
     @Before
     public void setUp() {
         Dash dash = login.get();
@@ -39,21 +41,25 @@ public class DashTest {
 
     @Test
     public void testAdd() {
-        // click sign-in
+        // click add button
         onView(withId(R.id.addButton)).perform(click());
 
         // check to see that we left the page
         onView(withId(R.id.addButton)).check(ViewAssertions.doesNotExist());
     }
 
-    public void testRemove() {
+    public void testDisplayAndRemove() {
+        // add a task to the apartment
         TaskAdder firstTask = new TaskAdder(apartmentID, "new task", 20, false);
         firstTask.execute();
 
+        // check if it showed up
         onView(allOf(withText("new task"))).check(ViewAssertions.matches(isDisplayed()));
 
+        // click new task
         onView(allOf(withText("new task"))).perform(click());
 
+        // assert that it disappeared
         onView(allOf(withText("new task"))).check(ViewAssertions.doesNotExist());
     }
 

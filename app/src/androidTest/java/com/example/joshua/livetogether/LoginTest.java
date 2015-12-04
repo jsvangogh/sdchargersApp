@@ -13,7 +13,6 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,7 +42,7 @@ public class LoginTest {
         // click sign-in
         onView(withId(R.id.sign_in_button)).perform(click());
 
-        // check to see that we left the page
+        // check to see that we stayed on the page
         onView(withId(R.id.email_login_form)).check(ViewAssertions.matches(isDisplayed()));
     }
 

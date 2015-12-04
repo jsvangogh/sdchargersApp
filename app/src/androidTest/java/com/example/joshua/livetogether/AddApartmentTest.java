@@ -20,7 +20,7 @@ public class AddApartmentTest {
 
     @Test
     public void testBlankJoin() {
-        // click sign-in
+        // click join button
         onView(withId(R.id.joinApt)).perform(click());
 
         // check to see that we did not leave the page
@@ -29,7 +29,7 @@ public class AddApartmentTest {
 
     @Test
     public void testBlankCreate() {
-        // click sign-in
+        // click create
         onView(withId(R.id.createApt)).perform(click());
 
         // check to see that we did not leave the page
