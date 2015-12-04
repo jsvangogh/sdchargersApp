@@ -29,6 +29,7 @@
         android:textSize="25dp"
         android:hint="Enter Apartment Name"
         android:textColorHint="@color/cyan"
+        android:textColor="@color/cyan"
         android:textAlignment="center"
         android:layout_below="@+id/textView"
         android:layout_centerHorizontal="true"
