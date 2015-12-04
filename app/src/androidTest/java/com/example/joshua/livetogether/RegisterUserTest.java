@@ -28,7 +28,7 @@ public class RegisterUserTest {
 
     @Test
     public void testRegister(){
-        onView(withId(R.id.username_register)).perform(typeText("test1"));
+        onView(withId(R.id.username_register)).perform(typeText("test2"));
         onView(withId(R.id.password_register)).perform(typeText("case"));
         onView(withId(R.id.number)).perform(typeText("8582078890"), closeSoftKeyboard());
 
@@ -59,7 +59,7 @@ public class RegisterUserTest {
         // check to see that we left the page and info moved
         onView(withId(R.id.username_register)).check(ViewAssertions.doesNotExist());
         onView(withText("Sign in")).check(ViewAssertions.matches(isDisplayed()));
-        onView(withText("test")).check(ViewAssertions.matches(isDisplayed()));
+        onView(withText("test1")).check(ViewAssertions.matches(isDisplayed()));
         onView(withText("case")).check(ViewAssertions.matches(isDisplayed()));
     }
 }
