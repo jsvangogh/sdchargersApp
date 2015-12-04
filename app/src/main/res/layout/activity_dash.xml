@@ -24,8 +24,7 @@
             android:layout_margin="5dp"
             android:layout_alignParentLeft="true"
         android:text="All Tasks"
-            android:background="@color/red"
-            />
+            android:background="@color/red" />
         <Button
             android:layout_width="110dp"
             android:layout_height="wrap_content"
@@ -76,7 +75,7 @@
         <ListView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/listView"
+            android:id="@+id/taskListView"
             android:layout_weight=".5"
             android:divider="@color/base01"
             android:dividerHeight="10sp"

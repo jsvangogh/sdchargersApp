@@ -3,11 +3,12 @@
     android:layout_width="fill_parent"
     android:layout_height="?android:attr/listPreferredItemHeight"
     android:padding="6dip"
-    android:background="@color/base03" >
+    android:background="@color/base03"
+    android:id="@+id/taskItem">
 
     <!-- Task -->
     <TextView
-        android:id="@+id/task"
+        android:id="@+id/taskDescription"
 
         android:layout_width="wrap_content"
         android:layout_height="26dip"
@@ -30,7 +31,7 @@
         android:textSize="15dip"
 
         android:layout_alignParentLeft="true"
-        android:layout_below="@id/task"
+        android:layout_below="@id/taskDescription"
 
         android:textColor="@color/orange"
         android:gravity="top"

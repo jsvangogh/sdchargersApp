@@ -43,7 +43,7 @@ public class Dash extends AppCompatActivity {
         mMyTasks = false;
 
         // set up listview and its adapter
-        mTaskList = (ListView) findViewById(R.id.listView);
+        mTaskList = (ListView) findViewById(R.id.taskListView);
         mTaskList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -179,7 +179,7 @@ public class Dash extends AppCompatActivity {
         }
 
         protected void onPostExecute(Void v) {
-            // let user know if task was readded
+            // let user know if task was re-added
             if(repeating) {
                 Toast.makeText(Dash.this, "Task will be re-added!", Toast.LENGTH_LONG).show();
             }

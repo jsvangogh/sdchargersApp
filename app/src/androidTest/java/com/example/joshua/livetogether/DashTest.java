@@ -10,18 +10,23 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.anything;
+import static org.hamcrest.Matchers.equalTo;
 
 @RunWith(AndroidJUnit4.class)
 public class DashTest {
 
     // test apartment ID
-    final String apartmentID = "5661e5f9ea616c000a66163b";
+    final String apartmentID = "56627048be7b7a000977f41b";
+
+    Dash dash;
 
     // runs before tests
     @Rule
@@ -30,17 +35,12 @@ public class DashTest {
     // try and add necessary data before running tests
     @Before
     public void setUp() {
-        Dash dash = login.get();
-        Intent loginIntent = dash.getIntent();
-        loginIntent.putExtra("com.example.joshua.livetogether.aptID", apartmentID);
-        loginIntent.putExtra("com.example.joshua.livetogether.user", "test");
-
-        dash.mAptID = apartmentID;
-        dash.currentUser = "test";
+        dash = login.get();
     }
 
     @Test
     public void testAdd() {
+
         // click add button
         onView(withId(R.id.addButton)).perform(click());
 
@@ -48,19 +48,28 @@ public class DashTest {
         onView(withId(R.id.addButton)).check(ViewAssertions.doesNotExist());
     }
 
-    public void testDisplayAndRemove() {
+    @Test
+    public void testRemove() {
+        dash.mAptID = apartmentID;
+        dash.currentUser = "test";
+        Task task = new Task("test", "new task");
+
         // add a task to the apartment
         TaskAdder firstTask = new TaskAdder(apartmentID, "new task", 20, false);
         firstTask.execute();
 
-        // check if it showed up
-        onView(allOf(withText("new task"))).check(ViewAssertions.matches(isDisplayed()));
-
-        // click new task
-        onView(allOf(withText("new task"))).perform(click());
+        // click on new task
+        //onView(allOf(withText("new task"))).perform(click());
+        //onData(hasToString("new task")).perform(click());
+        //onData(allOf(hasToString("new task"))).inAdapterView(withId(R.id.taskListView)).atPosition(0).perform(click());
+        onData(anything()).inAdapterView(withId(R.id.taskListView))
+                .onChildView(withId(R.id.taskDescription))
+                .perform(click());
 
         // assert that it disappeared
-        onView(allOf(withText("new task"))).check(ViewAssertions.doesNotExist());
+        onData(equalTo(task)).inAdapterView(withId(R.id.taskListView))
+                .onChildView(withId(R.id.taskDescription))
+                .check(ViewAssertions.doesNotExist());
     }
 
     /**

@@ -42,7 +42,7 @@ public class TaskAdapter extends ArrayAdapter<Task> {
         if (i != null) {
 
             // obtain textViews
-            TextView tt = (TextView) v.findViewById(R.id.task);
+            TextView tt = (TextView) v.findViewById(R.id.taskDescription);
             TextView ttd = (TextView) v.findViewById(R.id.assignee);
 
             // check to see if each individual textview is null.
