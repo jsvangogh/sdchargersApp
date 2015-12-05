@@ -14,16 +14,16 @@ import android.widget.EditText;
 public class AddTask extends AppCompatActivity {
 
     // global variables
-    private String mTaskName = "";
-    private String mAptID = "";
-    private TaskAdder mTask;
-    private boolean repeat;
-    private int weight=10;
+    String mTaskName = "";
+    String mAptID = "";
+    TaskAdder mTask;
+    boolean repeat;
+    int weight=10;
 
     // UI references
-    private Button easyButton;
-    private Button mediumButton;
-    private Button hardButton;
+    Button easyButton;
+    Button mediumButton;
+    Button hardButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

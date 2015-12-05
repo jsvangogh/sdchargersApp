@@ -22,7 +22,7 @@ public class DashTest {
 
     // test apartment ID
     final String apartmentID = "5661e5f9ea616c000a66163b";
-
+    Dash dash;
     // runs before tests
     @Rule
     public final ActivityRule<Dash> login = new ActivityRule<>(Dash.class);
@@ -30,17 +30,13 @@ public class DashTest {
     // try and add necessary data before running tests
     @Before
     public void setUp() {
-        Dash dash = login.get();
-        Intent loginIntent = dash.getIntent();
-        loginIntent.putExtra("com.example.joshua.livetogether.aptID", apartmentID);
-        loginIntent.putExtra("com.example.joshua.livetogether.user", "test");
-
-        dash.mAptID = apartmentID;
-        dash.currentUser = "test";
+        dash = login.get();
     }
 
     @Test
     public void testAdd() {
+        dash.mAptID = apartmentID;
+        dash.currentUser = "test";
         // click add button
         onView(withId(R.id.addButton)).perform(click());
 
@@ -48,7 +44,10 @@ public class DashTest {
         onView(withId(R.id.addButton)).check(ViewAssertions.doesNotExist());
     }
 
+    @Test
     public void testDisplayAndRemove() {
+        dash.mAptID = apartmentID;
+        dash.currentUser = "test";
         // add a task to the apartment
         TaskAdder firstTask = new TaskAdder(apartmentID, "new task", 20, false);
         firstTask.execute();
