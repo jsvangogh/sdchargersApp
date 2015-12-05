@@ -17,8 +17,8 @@ import java.util.ArrayList;
  */
 public class Dash extends AppCompatActivity {
 
-    private String mAptID; // apartment ID
-    private TaskRetriever mTaskRetriever; // retrieve tasks
+    String mAptID; // apartment ID
+    TaskRetriever mTaskRetriever; // retrieve tasks
     ArrayList<Task> tasks = new ArrayList<>(); // hold tasks
     ListView mTaskList; // Holds tasks
     TaskAdapter mTaskAdapter; // adapter for listview
@@ -124,7 +124,21 @@ public class Dash extends AppCompatActivity {
 
         protected void onPostExecute(Void v) {
             mTaskAdapter.clear();
-            boolean empty = tempTasks.length == 0;
+            int numOfTasks = 0;
+
+            if(tempTasks != null) {
+                numOfTasks = tempTasks.length;
+                System.err.println("Task Retrieval Error");
+            }
+
+            boolean empty = numOfTasks == 0;
+
+            // apartment has no tasks
+            if (empty) {
+                mTaskAdapter.add(new Task("", "No Tasks"));
+                mTaskRetriever = null;
+                return;
+            }
 
             // fill task lists
             for (int i = 0; i < tempTasks.length; i++) {
@@ -133,11 +147,6 @@ public class Dash extends AppCompatActivity {
                 } else if (mMyTasks == false) {
                     mTaskAdapter.add(tempTasks[i]);
                 }
-            }
-
-            // apartment has no tasks
-            if (empty) {
-                mTaskAdapter.add(new Task("", "No Tasks"));
             }
 
             mTaskRetriever = null;

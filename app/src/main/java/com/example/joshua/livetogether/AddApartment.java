@@ -39,7 +39,7 @@ public class AddApartment extends AppCompatActivity {
         setContentView(R.layout.activity_add_apartment);
 
         // get apartment name text field
-        apartmentNameView = (EditText)(findViewById(R.id.editText2));
+        apartmentNameView = (EditText)(findViewById(R.id.enterApartment));
         Intent intent = getIntent();
 
         // get user ID and Name from calling page

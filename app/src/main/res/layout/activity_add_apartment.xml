@@ -23,7 +23,7 @@
     <EditText
         android:layout_width="300dp"
         android:layout_height="50dp"
-        android:id="@+id/editText2"
+        android:id="@+id/enterApartment"
         android:background="@color/base02"
         android:inputType="textLongMessage"
         android:textSize="25dp"
@@ -44,7 +44,7 @@
         android:onClick="onClick"
         android:textAlignment="gravity"
         android:layout_centerVertical="true"
-        android:layout_alignStart="@+id/editText2"
+        android:layout_alignStart="@+id/enterApartment"
         android:background="@color/magenta" />
 
     <Button
@@ -53,7 +53,7 @@
         android:text="Join"
         android:id="@+id/joinApt"
         android:layout_alignTop="@+id/createApt"
-        android:layout_alignEnd="@+id/editText2"
+        android:layout_alignEnd="@+id/enterApartment"
         android:textSize="25dp"
         android:onClick="onClick"
         android:background="@color/blue" />
