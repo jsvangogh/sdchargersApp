@@ -98,7 +98,7 @@
         android:onClick="setEasy"
         android:background="@color/base03"
         android:textSize="60dp"
-        android:textColor="#b58900"
+        android:textColor="#859900"
         android:shadowColor="#073642"
         android:layout_centerVertical="true"
         android:layout_toStartOf="@+id/add_task_medium" />
