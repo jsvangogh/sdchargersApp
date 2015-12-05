@@ -17,11 +17,26 @@ package com.example.joshua.livetogether;
 
  	public String getAssignee ()
  	{
-		return assignee; 	
+		return assignee;
  	}
 
- 	public String getDescription ()
+	public String getDescription ()
  	{
  		return description;
  	}
+
+	@Override
+	public String toString() {
+		return description;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(obj.getClass() == Task.class) {
+			return ((Task) obj).getDescription().equals(getDescription()) &&
+					((Task) obj).getAssignee().equals(getAssignee());
+		}
+		else
+			return false;
+	}
  }

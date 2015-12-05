@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
@@ -43,7 +44,7 @@ public class Dash extends AppCompatActivity {
         mMyTasks = false;
 
         // set up listview and its adapter
-        mTaskList = (ListView) findViewById(R.id.listView);
+        mTaskList = (ListView) findViewById(R.id.taskListView);
         mTaskList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -52,6 +53,20 @@ public class Dash extends AppCompatActivity {
                     TaskRemover mTaskRemover = new TaskRemover(task);
                     mTaskRemover.execute();
                 }
+            }
+        });
+
+        findViewById(R.id.my_tasks).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                myTasks();
+            }
+        });
+
+        findViewById(R.id.show_tasks).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                allTasks();
             }
         });
 
@@ -89,7 +104,7 @@ public class Dash extends AppCompatActivity {
     /**
      * Show all tasks
      */
-    public void allTasks(View view) {
+    public void allTasks() {
         mMyTasks = false;
         onResume();
     }
@@ -97,7 +112,7 @@ public class Dash extends AppCompatActivity {
     /**
      * Show only my tasks
      */
-    public void myTasks(View view) {
+    public void myTasks() {
         mMyTasks = true;
         onResume();
     }
@@ -179,7 +194,7 @@ public class Dash extends AppCompatActivity {
         }
 
         protected void onPostExecute(Void v) {
-            // let user know if task was readded
+            // let user know if task was re-added
             if(repeating) {
                 Toast.makeText(Dash.this, "Task will be re-added!", Toast.LENGTH_LONG).show();
             }
